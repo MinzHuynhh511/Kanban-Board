@@ -189,6 +189,28 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Scrumban Knowledge & Tips Widget (Bạn có biết?) -->
+                <div class="panel-section scrumban-tips-section">
+                    <div class="section-header">
+                        <div class="tips-title-group">
+                            <span class="tips-icon">💡</span>
+                            <h3 data-i18n="tipsSectionTitle">Bạn có biết? · Mẹo Scrumban</h3>
+                        </div>
+                        <div class="tips-nav">
+                            <button type="button" class="btn-icon tips-nav-btn" onclick="prevTip()" title="Gợi ý trước">⟨</button>
+                            <span class="tips-counter" id="tipCounter">1/8</span>
+                            <button type="button" class="btn-icon tips-nav-btn" onclick="nextTip()" title="Gợi ý tiếp theo">⟩</button>
+                        </div>
+                    </div>
+                    <div class="tip-card" id="tipCard" onmouseenter="pauseTipAutoPlay()" onmouseleave="resumeTipAutoPlay()">
+                        <div class="tip-content">
+                            <h4 class="tip-heading" id="tipHeading">Quy tắc "Stop Starting, Start Finishing"</h4>
+                            <p class="tip-body" id="tipBody">Đừng vội nhận thêm việc mới vào cột Doing khi bạn chưa hoàn thành việc cũ. Giới hạn 2-3 việc cùng lúc sẽ giúp bạn tập trung và tăng 40% tốc độ hoàn thành!</p>
+                        </div>
+                        <div class="tip-dots" id="tipDots"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- TAB: Product Backlog -->
@@ -314,12 +336,12 @@
                 <div class="form-group">
                     <label data-i18n="labelStickyColor">Màu Sticky Note</label>
                     <div class="color-picker" id="colorPicker">
-                        <div class="color-option selected" data-color="#F5F0E1" title="和紙 Washi"></div>
-                        <div class="color-option" data-color="#FADCE6" title="桜 Sakura"></div>
-                        <div class="color-option" data-color="#D6E5C3" title="抹茶 Matcha"></div>
-                        <div class="color-option" data-color="#C9D9E8" title="藍 Ai"></div>
-                        <div class="color-option" data-color="#DDD2E4" title="藤 Fuji"></div>
-                        <div class="color-option" data-color="#F0DCC0" title="琥珀 Kohaku"></div>
+                        <div class="color-option selected" data-color="#F5F0E1" style="background-color: #F5F0E1;" title="和紙 Washi"></div>
+                        <div class="color-option" data-color="#FADCE6" style="background-color: #FADCE6;" title="桜 Sakura"></div>
+                        <div class="color-option" data-color="#D6E5C3" style="background-color: #D6E5C3;" title="抹茶 Matcha"></div>
+                        <div class="color-option" data-color="#C9D9E8" style="background-color: #C9D9E8;" title="藍 Ai"></div>
+                        <div class="color-option" data-color="#DDD2E4" style="background-color: #DDD2E4;" title="藤 Fuji"></div>
+                        <div class="color-option" data-color="#F0DCC0" style="background-color: #F0DCC0;" title="琥珀 Kohaku"></div>
                     </div>
                 </div>
                 <input type="hidden" id="taskId" value="">

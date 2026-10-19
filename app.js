@@ -32,6 +32,7 @@ const TRANSLATIONS = {
         burndownActual: 'Thực tế',
         standupTitle: '朝会 · Daily Standup',
         emptyStandup: 'Nhấn ＋ để ghi chú standup hàng ngày',
+        tipsSectionTitle: 'Bạn có biết? · Mẹo Scrumban',
         backlogTitle: 'バックログ · Product Backlog',
         backlogDesc: 'Danh sách User Stories chưa vào Sprint. Bấm "Đưa vào Sprint" để bắt đầu thực hiện.',
         emptyBacklog: 'Backlog trống. Nhấn ＋ để thêm.',
@@ -113,6 +114,7 @@ const TRANSLATIONS = {
         burndownActual: 'Actual',
         standupTitle: '朝会 · Daily Standup',
         emptyStandup: 'Click ＋ to record daily standup notes',
+        tipsSectionTitle: 'Did you know? · Scrumban Tips',
         backlogTitle: 'バックログ · Product Backlog',
         backlogDesc: 'User Stories not yet in Sprint. Click "Move to Sprint" to start.',
         emptyBacklog: 'Backlog is empty. Click ＋ to add.',
@@ -258,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
     setupEventListeners();
     setupBurndownChart();
+    startTipAutoPlay();
 });
 
 // Helper for dates
@@ -444,6 +447,7 @@ function renderAll() {
     renderStandup();
     renderRetro();
     renderBurndown();
+    renderTip();
 }
 
 // ===== RENDER KANBAN COLUMNS =====
@@ -978,6 +982,170 @@ function deleteRetroItem(category, index) {
     }
 }
 
+// ===== SCRUMBAN KNOWLEDGE & TIPS (BẠN CÓ BIẾT?) =====
+const SCRUMBAN_TIPS = [
+    {
+        id: 1,
+        vi: {
+            title: 'Quy tắc "Stop Starting, Start Finishing"',
+            desc: 'Đừng vội nhận thêm việc mới vào cột Doing khi bạn chưa hoàn thành việc cũ. Giới hạn 2-3 việc cùng lúc sẽ giúp bạn tập trung và tăng 40% tốc độ hoàn thành!'
+        },
+        en: {
+            title: 'Rule: "Stop Starting, Start Finishing"',
+            desc: 'Avoid pulling new tasks into Doing before finishing ongoing ones. Keeping at most 2–3 active tasks boosts your delivery speed by up to 40%!'
+        }
+    },
+    {
+        id: 2,
+        vi: {
+            title: 'Cách chia nhỏ Story Points (SP)',
+            desc: 'Điểm SP thể hiện độ phức tạp chứ không phải số giờ làm. Nếu một task lớn hơn 5 SP, hãy chia nhỏ thành các việc 1–3 SP để dễ quản lý và dễ đạt mục tiêu hơn.'
+        },
+        en: {
+            title: 'How to estimate Story Points (SP)',
+            desc: 'Story points measure complexity, not hours. If a task exceeds 5 SP, split it into smaller 1–3 SP tasks to manage and complete it smoothly.'
+        }
+    },
+    {
+        id: 3,
+        vi: {
+            title: 'Tận dụng Product Backlog hiệu quả',
+            desc: 'Đừng vội đưa mọi ý tưởng vào bảng Kanban ngay. Hãy ghi chúng vào tab Backlog. Khi chuẩn bị Sprint mới, chỉ chọn những việc quan trọng nhất và bấm "Đưa vào Sprint"!'
+        },
+        en: {
+            title: 'Use Product Backlog efficiently',
+            desc: "Don't dump every raw idea straight into Kanban. Record them in the Backlog tab first. When starting a Sprint, pick the most valuable ones and click 'Move to Sprint'!"
+        }
+    },
+    {
+        id: 4,
+        vi: {
+            title: 'Cách đọc biểu đồ Burndown Chart',
+            desc: 'Đường màu lam là tiến độ lý tưởng, đường màu cam là số điểm công việc còn lại thực tế. Nếu đường màu cam nằm dưới hoặc bám sát đường màu lam, nhóm bạn đang kiểm soát tiến độ rất tốt!'
+        },
+        en: {
+            title: 'How to read the Burndown Chart',
+            desc: 'The blue line is ideal pace; the amber line shows actual remaining points. If amber stays near or below blue, you are right on track!'
+        }
+    },
+    {
+        id: 5,
+        vi: {
+            title: 'Họp Daily Standup chỉ trong 5 phút',
+            desc: 'Mỗi sáng, hãy ghi chú nhanh 3 điều: (1) Hôm qua đã làm gì? (2) Hôm nay cam kết làm gì? (3) Có khó khăn nào cản trở không? Nhận diện trở ngại sớm là chìa khóa của Agile.'
+        },
+        en: {
+            title: 'Daily Standup in 5 minutes',
+            desc: 'Each morning, quickly answer 3 questions: (1) What did I do yesterday? (2) What will I do today? (3) Any blockers? Unblocking early is key to Agile.'
+        }
+    },
+    {
+        id: 6,
+        vi: {
+            title: 'Cải tiến liên tục với Kaizen (Retrospective)',
+            desc: 'Cuối mỗi Sprint, dành 10 phút mở tab Retro để ghi nhận: Điều gì đã làm tốt (🌸), điều gì cần khắc phục (🍂), và cam kết 1 hành động cải tiến cụ thể (🎋) cho Sprint tiếp theo.'
+        },
+        en: {
+            title: 'Continuous improvement with Kaizen',
+            desc: 'At the end of each Sprint, spend 10 minutes in the Retro tab to note: What went well (🌸), what to improve (🍂), and commit to concrete actions (🎋) for the next Sprint.'
+        }
+    },
+    {
+        id: 7,
+        vi: {
+            title: 'Phân loại công việc bằng màu Sticky Note',
+            desc: 'Hãy quy ước màu sắc để dễ nhận diện tức thì: Hồng (🌸) cho việc quan trọng/khẩn cấp, Xanh lá (🍵) cho tính năng mới, Chàm (🌊) cho sửa lỗi, và Kem (📜) cho việc thường nhật.'
+        },
+        en: {
+            title: 'Categorize with Sticky Note colors',
+            desc: 'Create intuitive color coding: Sakura pink for urgent, Matcha green for new features, Indigo blue for bug fixes, and Washi cream for routine tasks.'
+        }
+    },
+    {
+        id: 8,
+        vi: {
+            title: 'Sức mạnh kết hợp Scrumban (Scrum + Kanban)',
+            desc: 'Scrum cung cấp cấu trúc rõ ràng qua nhịp độ Sprint (1-2 tuần) và cam kết mục tiêu; Kanban cung cấp sự linh hoạt trực quan kéo thả. Kết hợp cả hai giúp bạn quản lý công việc vừa kỷ luật vừa linh hoạt!'
+        },
+        en: {
+            title: 'The power of Scrumban',
+            desc: 'Scrum gives you clear cadence and Sprint goals; Kanban gives you visual flow and flexibility. Combining both delivers the perfect balance of discipline and agility!'
+        }
+    }
+];
+
+let currentTipIndex = 0;
+let tipTimer = null;
+let isTipPaused = false;
+
+function renderTip() {
+    const tip = SCRUMBAN_TIPS[currentTipIndex];
+    if (!tip) return;
+
+    const headingEl = document.getElementById('tipHeading');
+    const bodyEl = document.getElementById('tipBody');
+    const counterEl = document.getElementById('tipCounter');
+    const dotsEl = document.getElementById('tipDots');
+
+    if (!headingEl || !bodyEl) return;
+
+    const tipData = tip[currentLang] || tip.vi;
+
+    headingEl.classList.add('tip-fade-out');
+    bodyEl.classList.add('tip-fade-out');
+
+    setTimeout(() => {
+        headingEl.textContent = tipData.title;
+        bodyEl.textContent = tipData.desc;
+        if (counterEl) counterEl.textContent = `${currentTipIndex + 1}/${SCRUMBAN_TIPS.length}`;
+
+        if (dotsEl) {
+            dotsEl.innerHTML = '';
+            SCRUMBAN_TIPS.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `tip-dot ${idx === currentTipIndex ? 'active' : ''}`;
+                dot.onclick = () => goToTip(idx);
+                dotsEl.appendChild(dot);
+            });
+        }
+
+        headingEl.classList.remove('tip-fade-out');
+        bodyEl.classList.remove('tip-fade-out');
+    }, 120);
+}
+
+function nextTip() {
+    currentTipIndex = (currentTipIndex + 1) % SCRUMBAN_TIPS.length;
+    renderTip();
+}
+
+function prevTip() {
+    currentTipIndex = (currentTipIndex - 1 + SCRUMBAN_TIPS.length) % SCRUMBAN_TIPS.length;
+    renderTip();
+}
+
+function goToTip(idx) {
+    currentTipIndex = idx;
+    renderTip();
+}
+
+function startTipAutoPlay() {
+    if (tipTimer) clearInterval(tipTimer);
+    tipTimer = setInterval(() => {
+        if (!isTipPaused) {
+            nextTip();
+        }
+    }, 7000);
+}
+
+function pauseTipAutoPlay() {
+    isTipPaused = true;
+}
+
+function resumeTipAutoPlay() {
+    isTipPaused = false;
+}
+
 // ===== SPRINT MODAL & END SPRINT =====
 function openSprintModal() {
     document.getElementById('sprintNameInput').value = currentSprint.name;
@@ -1066,9 +1234,16 @@ function openTaskModal(taskId = null) {
         document.getElementById('taskDueDate').value = task.dueDate || '';
 
         // Select color
+        let colorFound = false;
         document.querySelectorAll('#colorPicker .color-option').forEach(o => {
-            o.classList.toggle('selected', o.dataset.color === task.color);
+            const isMatch = (o.dataset.color || '').toLowerCase() === (task.color || '').toLowerCase();
+            o.classList.toggle('selected', isMatch);
+            if (isMatch) colorFound = true;
         });
+        if (!colorFound) {
+            const defaultOpt = document.querySelector('#colorPicker .color-option[data-color="#F5F0E1"]');
+            if (defaultOpt) defaultOpt.classList.add('selected');
+        }
     } else {
         document.getElementById('modalTitle').textContent = t('modalAddTaskTitle');
         document.getElementById('taskId').value = '';

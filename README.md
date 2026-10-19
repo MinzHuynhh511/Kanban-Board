@@ -98,6 +98,77 @@ Mô hình họp đúc kết kinh nghiệm sau mỗi Sprint theo chuẩn KPT (Kee
 
 ---
 
+## 🎯 Hướng dẫn & Phương pháp làm việc hiệu quả với Kanban + Scrum (Scrumban)
+
+Nếu bạn là người mới bắt đầu hoặc muốn tối ưu hóa hiệu suất làm việc hàng ngày, đây là cẩm nang các phương pháp thực tiễn đã được kiểm chứng giúp bạn đạt năng suất cao nhất mà không bị căng thẳng, quá tải.
+
+### 1. Vòng đời vận hành một Sprint chuẩn (Scrumban Workflow)
+```text
+[Ý tưởng mới] ➡️ [Product Backlog] ➡️ [Sprint Planning: Chọn & Đưa vào To Do]
+                                                    ⬇️
+[Cải tiến Kaizen (Retro)] ⬅️ [Done: Hoàn tất] ⬅️ [Doing: Tối đa 2-3 việc (WIP)]
+```
+
+* **Giai đoạn 1: Thu thập ý tưởng vào Backlog (Grooming)**:
+  * Khi nảy ra ý tưởng mới, tính năng mới hoặc yêu cầu phát sinh, **đừng đưa ngay vào To Do**. Hãy mở tab **Backlog** và thêm vào danh sách User Story kèm tiêu chí hoàn thành (Acceptance Criteria).
+  * Điều này giúp bảng Kanban của bạn luôn gọn gàng, tập trung vào việc hiện tại và tránh bị ngập trong hàng chục đầu việc chưa được gạn lọc.
+
+* **Giai đoạn 2: Lập kế hoạch Sprint (Sprint Planning)**:
+  * Đầu mỗi tuần hoặc mỗi chu kỳ Sprint (thường từ 1 đến 2 tuần), mở tab Backlog.
+  * Ước lượng độ phức tạp (Story Points: 1, 2, 3, 5, 8).
+  * Bấm nút **`➡️ Đưa vào Sprint`** cho những việc có độ ưu tiên cao nhất, vừa với năng lực Velocity của bạn (ví dụ: mục tiêu 14–20 SP/Sprint).
+
+* **Giai đoạn 3: Vận hành hàng ngày (Execution & Flow)**:
+  * **Họp Daily Standup 5 phút mỗi sáng**: Tự điểm lại: (1) Hôm qua xong gì? (2) Hôm nay cam kết làm gì? (3) Đang bị kẹt ở đâu?
+  * Chỉ kéo **1 việc duy nhất** từ *To Do* sang *Doing* khi bạn sẵn sàng bắt tay vào làm.
+
+* **Giai đoạn 4: Đánh giá & Cải tiến liên tục (Retrospective & Kaizen)**:
+  * Khi hết thời gian Sprint, bấm biểu tượng ⚙️ rồi chọn **Kết thúc Sprint**.
+  * Chuyển sang tab **Retro** để ghi lại: Điều gì làm tốt (🌸), điều gì làm chậm tiến độ (🍂), và hành động sửa đổi cụ thể cho Sprint tới (🎋).
+
+---
+
+### 2. Các nguyên tắc vàng để tối đa hóa hiệu suất
+
+#### 🛑 Nguyên lý 1: "Stop Starting, Start Finishing" (Dừng bắt đầu, hãy kết thúc)
+* **Sai lầm phổ biến**: Mở cùng lúc 5–6 việc trong cột *Doing*, nhảy qua nhảy lại giữa các đầu việc khiến việc nào cũng dở dang, não bộ bị phân mảnh (Context Switching).
+* **Quy tắc vàng**: Thiết lập giới hạn **WIP (Work In Progress)**. Luôn giữ cột *Doing* ở mức **tối đa 2 đến 3 việc**. Chỉ khi một việc đã chuyển sang *Done*, bạn mới được phép kéo việc tiếp theo vào *Doing*.
+
+#### 🍕 Nguyên lý 2: Quy tắc chia nhỏ công việc (Task Slicing)
+* **Vấn đề**: Một công việc quá lớn (ví dụ: "Viết toàn bộ ứng dụng") sẽ gây tâm lý chần chừ, khó bắt đầu và dễ trễ hạn.
+* **Quy tắc vàng**: Bất kỳ công việc nào có Story Points $\ge 8$, hãy chia nhỏ thành 2–3 thẻ Sticky Note nhỏ hơn (từ 1 đến 3 SP). Một công việc lý tưởng là việc có thể hoàn thành trong vòng nửa ngày đến 1 ngày làm việc.
+
+#### ⏱️ Nguyên lý 3: Kết hợp kỹ thuật Pomodoro & Timeboxing
+* Chọn 1 Sticky Note trong cột *Doing*.
+* Đặt đồng hồ 25 phút tập trung sâu tuyệt đối (không lướt web, không mở mạng xã hội).
+* Nghỉ ngơi 5 phút. Sau 4 chu kỳ Pomodoro, bạn sẽ hoàn thành xong Sticky Note đó một cách nhẹ nhàng!
+
+#### 🎨 Nguyên lý 4: Quy ước màu sắc Washi thông minh (Color Coding)
+Sử dụng 6 gam màu giấy Washi Nhật Bản để nhận diện trực quan tức thì:
+* 🌸 **Sakura (Hồng)**: Việc khẩn cấp, việc có hạn chót gấp, lỗi nghiêm trọng cần sửa ngay.
+* 🍵 **Matcha (Xanh trà)**: Tính năng mới, sáng tạo, phát triển cốt lõi.
+* 🌊 **Ai (Chàm)**: Cải tiến kỹ thuật, dọn dẹp mã nguồn, nghiên cứu tài liệu.
+* 📜 **Washi (Trắng kem)**: Công việc thường nhật, hành chính, vận hành.
+* 🪵 **Kohaku (Hổ phách)**: Gặp gỡ khách hàng, họp hành, báo cáo.
+* 🪻 **Fuji (Tím)**: Ý tưởng đang thử nghiệm, kế hoạch dài hạn.
+
+#### 📉 Nguyên lý 5: Đọc và làm chủ biểu đồ Burndown Chart
+* **Đường màu lam (Ideal Line)**: Tốc độ tiêu thụ điểm công việc lý tưởng theo kế hoạch từ ngày bắt đầu đến ngày kết thúc.
+* **Đường màu cam (Actual Line)**: Số Story Points còn lại thực tế mỗi ngày.
+  * *Nằm dưới đường lam*: Bạn đang vượt tiến độ 🎉.
+  * *Nằm trên đường lam*: Có dấu hiệu trễ hạn ⚠️. Cần họp Standup để loại bỏ blocker hoặc thương lượng giảm bớt các task không cần thiết ra khỏi Sprint.
+
+---
+
+### 3. Checklist từng ngày cho người mới bắt đầu (Beginner Daily Routine)
+
+* [ ] **Đầu tuần (Thứ Hai)**: Mở tab *Sprint*, đặt mục tiêu rõ ràng (Sprint Goal). Chọn 4–6 task từ *Backlog* đưa vào *To Do*.
+* [ ] **Mỗi sáng (8h30 - 9h00)**: Đọc 1 gợi ý tại widget **"💡 Bạn có biết?"**. Bấm dấu ＋ tại *Daily Standup* để ghi chú 2 câu ngắn về mục tiêu trong ngày.
+* [ ] **Trong ngày**: Duy trì tối đa 2 việc tại *Doing*. Kéo sang *Done* ngay khi hoàn thành để cảm nhận sự tưởng thưởng não bộ (Dopamine reward).
+* [ ] **Cuối tuần (Thứ Sáu)**: Kiểm tra biểu đồ Burndown Chart. Vào tab *Retro* viết ít nhất 1 điều tốt và 1 điều cần rút kinh nghiệm. Nhấn **Kết thúc Sprint** để sẵn sàng cho tuần mới đầy năng lượng!
+
+---
+
 ## 📁 Cấu trúc tệp
 
 ```text

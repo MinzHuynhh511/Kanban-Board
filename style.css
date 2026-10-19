@@ -1078,28 +1078,48 @@ select option {
 /* Color Picker */
 .color-picker {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    align-items: center;
+    padding: 4px 0;
 }
 
 .color-option {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 1.5px solid rgba(0, 0, 0, 0.2);
     transition: var(--transition);
     position: relative;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+.color-option[data-color="#F5F0E1"] { background-color: #F5F0E1 !important; }
+.color-option[data-color="#FADCE6"] { background-color: #FADCE6 !important; }
+.color-option[data-color="#D6E5C3"] { background-color: #D6E5C3 !important; }
+.color-option[data-color="#C9D9E8"] { background-color: #C9D9E8 !important; }
+.color-option[data-color="#DDD2E4"] { background-color: #DDD2E4 !important; }
+.color-option[data-color="#F0DCC0"] { background-color: #F0DCC0 !important; }
+
 .color-option:hover {
-    transform: scale(1.1);
+    transform: scale(1.12);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .color-option.selected {
-    border-color: #fff;
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px var(--kohaku-amber);
+    border-color: #ffffff;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2.5px var(--kohaku-amber), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.color-option.selected::after {
+    content: '✓';
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #242220;
 }
 
 /* Modal Actions */
@@ -1229,6 +1249,125 @@ select option {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.22);
+}
+
+/* ===== SCRUMBAN KNOWLEDGE & TIPS (BẠN CÓ BIẾT?) ===== */
+.scrumban-tips-section {
+    background: linear-gradient(145deg, rgba(32, 34, 42, 0.95), rgba(40, 42, 53, 0.8));
+    border: 1px solid rgba(196, 139, 72, 0.25) !important;
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    position: relative;
+    overflow: hidden;
+}
+
+.scrumban-tips-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3.5px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--kohaku-amber), var(--bamboo-teal));
+}
+
+.tips-title-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.tips-icon {
+    font-size: 1.15rem;
+    animation: gentleGlow 3s infinite ease-in-out;
+}
+
+@keyframes gentleGlow {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.15); }
+}
+
+.tips-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tips-counter {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    font-family: inherit;
+    min-width: 28px;
+    text-align: center;
+}
+
+.tips-nav-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+    padding: 0;
+    border-radius: 4px;
+}
+
+.tip-card {
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.22);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: var(--transition);
+}
+
+.tip-card:hover {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(196, 139, 72, 0.22);
+}
+
+.tip-heading {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--kohaku-amber);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1.35;
+    transition: opacity 0.2s ease;
+}
+
+.tip-body {
+    font-size: 0.77rem;
+    color: var(--text-secondary);
+    line-height: 1.48;
+    transition: opacity 0.2s ease;
+}
+
+.tip-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.tip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tip-dot.active {
+    background: var(--kohaku-amber);
+    width: 16px;
+    border-radius: 3px;
+}
+
+.tip-fade-out {
+    opacity: 0.2;
+    transform: translateY(2px);
 }
 
 /* ===== RESPONSIVE ===== */
