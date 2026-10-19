@@ -1,221 +1,462 @@
-// ===== KANBAN BOARD APP =====
+// ==========================================================================
+// 看板 KANBAN & SCRUM AGILE ENGINE
+// Multi-language (Tiếng Việt & English) — Zero Font Error
+// Japanese Zen Aesthetic & Continuous Improvement (改善 - Kaizen)
+// ==========================================================================
 
-// --- Data ---
+// ===== MULTI-LANGUAGE DICTIONARY (i18n) =====
+let currentLang = localStorage.getItem('kanban_zen_lang') || 'vi';
+
+const TRANSLATIONS = {
+    vi: {
+        appSubtitle: 'アジャイル · Agile & Scrum',
+        sprintDaysRemaining: '{days} ngày còn lại',
+        sprintDueToday: 'Hôm nay là hạn cuối',
+        sprintOverdue: 'Đã quá hạn {days} ngày',
+        statTodoLabel: '待',
+        statDoingLabel: '進',
+        statDoneLabel: '完',
+        btnAddTask: 'Thêm việc',
+        colTodoTitle: '待機 · Cần làm',
+        colDoingTitle: '進行 · Đang làm',
+        colDoneTitle: '完了 · Hoàn thành',
+        emptyTodo: 'Kéo thả sticky note vào đây',
+        emptyDoing: 'Đang thực hiện',
+        emptyDone: 'Đã hoàn thành',
+        sprintCurrentTitle: 'スプリント · Sprint hiện tại',
+        labelCompleted: 'hoàn thành',
+        labelGoal: 'Mục tiêu',
+        noGoal: 'Chưa đặt mục tiêu',
+        burndownTitle: 'バーンダウン · Burndown',
+        burndownIdeal: 'Lý tưởng',
+        burndownActual: 'Thực tế',
+        standupTitle: '朝会 · Daily Standup',
+        emptyStandup: 'Nhấn ＋ để ghi chú standup hàng ngày',
+        backlogTitle: 'バックログ · Product Backlog',
+        backlogDesc: 'Danh sách User Stories chưa vào Sprint. Bấm "Đưa vào Sprint" để bắt đầu thực hiện.',
+        emptyBacklog: 'Backlog trống. Nhấn ＋ để thêm.',
+        historyTitle: '歴史 · Sprint History',
+        emptyHistory: 'Chưa có Sprint nào hoàn thành',
+        retroTitle: '振り返り · Retrospective',
+        retroDesc: 'Nhìn lại Sprint — điều gì tốt, điều gì cần cải thiện?',
+        retroGoodHeader: '🌸 Tốt — うまくいったこと',
+        retroImproveHeader: '🍂 Cải thiện — 改善すべきこと',
+        retroActionHeader: '🎋 Hành động — アクション',
+        retroEmpty: 'Chưa có mục nào',
+        btnMoveToSprint: '➡️ Đưa vào Sprint',
+        modalAddTaskTitle: '✏️ Thêm công việc mới',
+        modalEditTaskTitle: '✏️ Chỉnh sửa công việc',
+        labelTaskTitle: 'Tiêu đề',
+        labelTaskDesc: 'Mô tả',
+        labelPriority: 'Độ ưu tiên',
+        priorityLow: 'Thấp',
+        priorityMedium: 'Trung bình',
+        priorityHigh: 'Cao',
+        labelStatus: 'Trạng thái',
+        statusTodoOpt: '待機 · To Do',
+        statusDoingOpt: '進行 · Doing',
+        statusDoneOpt: '完了 · Done',
+        labelDueDate: 'Hạn chót',
+        labelStickyColor: 'Màu Sticky Note',
+        btnCancel: 'Hủy',
+        btnSave: 'Lưu',
+        deleteTitle: 'Xác nhận xóa',
+        deleteMsg: 'Bạn có chắc chắn muốn xóa công việc này?',
+        btnDelete: 'Xóa',
+        sprintConfigTitle: '⚙️ Cấu hình Sprint',
+        labelSprintName: 'Tên Sprint',
+        labelSprintGoal: 'Mục tiêu Sprint',
+        labelStartDate: 'Ngày bắt đầu',
+        labelEndDate: 'Ngày kết thúc',
+        btnEndSprint: 'Kết thúc Sprint',
+        btnSaveSprint: 'Lưu Sprint',
+        addBacklogTitle: '📦 Thêm Backlog Item',
+        labelUserStory: 'User Story',
+        labelCriteria: 'Acceptance Criteria',
+        toastMoved: 'Đã chuyển sang {status}',
+        toastAdded: 'Đã thêm "{title}"',
+        toastUpdated: 'Đã cập nhật "{title}"',
+        toastDeleted: 'Đã xóa "{title}"',
+        toastBacklogMoved: 'Đã đưa "{title}" vào Sprint!',
+        toastStandupSaved: 'Đã lưu ghi chú Standup',
+        toastRetroSaved: 'Đã lưu nhận xét Retrospective',
+        toastSprintUpdated: 'Đã cập nhật cấu hình Sprint',
+        toastSprintEnded: 'Chúc mừng! Đã kết thúc và khởi tạo {name}',
+        standupPrompt: 'Ghi chú Daily Standup hôm nay:\n(Hôm qua đã làm gì? Hôm nay sẽ làm gì? Có khó khăn gì không?)',
+        retroPromptGood: 'Điều gì đã diễn ra tốt trong Sprint này?',
+        retroPromptImprove: 'Điều gì có thể cải thiện tốt hơn?',
+        retroPromptAction: 'Hành động cụ thể cho Sprint tiếp theo?',
+        confirmEndSprint: 'Bạn có chắc chắn muốn kết thúc {name}? Các công việc hoàn thành sẽ được lưu vào lịch sử.',
+        today: 'Hôm nay'
+    },
+    en: {
+        appSubtitle: 'アジャイル · Agile & Scrum',
+        sprintDaysRemaining: '{days} days remaining',
+        sprintDueToday: 'Sprint ends today',
+        sprintOverdue: 'Overdue by {days} days',
+        statTodoLabel: 'Wait',
+        statDoingLabel: 'Prog',
+        statDoneLabel: 'Done',
+        btnAddTask: 'Add Task',
+        colTodoTitle: '待機 · To Do',
+        colDoingTitle: '進行 · In Progress',
+        colDoneTitle: '完了 · Done',
+        emptyTodo: 'Drag & drop sticky notes here',
+        emptyDoing: 'Work in progress',
+        emptyDone: 'Completed tasks',
+        sprintCurrentTitle: 'スプリント · Current Sprint',
+        labelCompleted: 'completed',
+        labelGoal: 'Goal',
+        noGoal: 'No sprint goal set',
+        burndownTitle: 'バーンダウン · Burndown',
+        burndownIdeal: 'Ideal',
+        burndownActual: 'Actual',
+        standupTitle: '朝会 · Daily Standup',
+        emptyStandup: 'Click ＋ to record daily standup notes',
+        backlogTitle: 'バックログ · Product Backlog',
+        backlogDesc: 'User Stories not yet in Sprint. Click "Move to Sprint" to start.',
+        emptyBacklog: 'Backlog is empty. Click ＋ to add.',
+        historyTitle: '歴史 · Sprint History',
+        emptyHistory: 'No completed Sprints yet',
+        retroTitle: '振り返り · Retrospective',
+        retroDesc: 'Sprint review — what went well, what to improve?',
+        retroGoodHeader: '🌸 Good — What went well',
+        retroImproveHeader: '🍂 Improve — What to improve',
+        retroActionHeader: '🎋 Action — Next steps',
+        retroEmpty: 'No items yet',
+        btnMoveToSprint: '➡️ Move to Sprint',
+        modalAddTaskTitle: '✏️ Add New Task',
+        modalEditTaskTitle: '✏️ Edit Task',
+        labelTaskTitle: 'Title',
+        labelTaskDesc: 'Description',
+        labelPriority: 'Priority',
+        priorityLow: 'Low',
+        priorityMedium: 'Medium',
+        priorityHigh: 'High',
+        labelStatus: 'Status',
+        statusTodoOpt: '待機 · To Do',
+        statusDoingOpt: '進行 · Doing',
+        statusDoneOpt: '完了 · Done',
+        labelDueDate: 'Due Date',
+        labelStickyColor: 'Sticky Note Color',
+        btnCancel: 'Cancel',
+        btnSave: 'Save',
+        deleteTitle: 'Confirm Delete',
+        deleteMsg: 'Are you sure you want to delete this task?',
+        btnDelete: 'Delete',
+        sprintConfigTitle: '⚙️ Sprint Configuration',
+        labelSprintName: 'Sprint Name',
+        labelSprintGoal: 'Sprint Goal',
+        labelStartDate: 'Start Date',
+        labelEndDate: 'End Date',
+        btnEndSprint: 'End Sprint',
+        btnSaveSprint: 'Save Sprint',
+        addBacklogTitle: '📦 Add Backlog Item',
+        labelUserStory: 'User Story',
+        labelCriteria: 'Acceptance Criteria',
+        toastMoved: 'Moved to {status}',
+        toastAdded: 'Added "{title}"',
+        toastUpdated: 'Updated "{title}"',
+        toastDeleted: 'Deleted "{title}"',
+        toastBacklogMoved: 'Moved "{title}" to Sprint!',
+        toastStandupSaved: 'Saved Standup note',
+        toastRetroSaved: 'Saved Retrospective note',
+        toastSprintUpdated: 'Sprint configuration updated',
+        toastSprintEnded: 'Congrats! Ended and created {name}',
+        standupPrompt: 'Daily Standup notes:\n(What was done yesterday? What will be done today? Any blockers?)',
+        retroPromptGood: 'What went well in this Sprint?',
+        retroPromptImprove: 'What could be improved?',
+        retroPromptAction: 'Concrete action items for the next Sprint?',
+        confirmEndSprint: 'Are you sure you want to end {name}? Completed tasks will be archived.',
+        today: 'Today'
+    }
+};
+
+function t(key, params = {}) {
+    let str = (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || TRANSLATIONS['vi'][key] || key;
+    Object.keys(params).forEach(k => {
+        str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), params[k]);
+    });
+    return str;
+}
+
+function setLanguage(lang) {
+    if (lang !== 'vi' && lang !== 'en') return;
+    currentLang = lang;
+    localStorage.setItem('kanban_zen_lang', lang);
+
+    // Update active button state
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // Update static DOM elements with data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        el.textContent = t(key);
+    });
+
+    // Re-render dynamic elements
+    renderAll();
+    showToast(lang === 'vi' ? 'Đã đổi sang Tiếng Việt' : 'Switched to English', 'info');
+}
+
+// ===== GLOBAL STATE =====
 let tasks = [];
+let backlog = [];
+let standups = [];
+let retros = { good: [], improve: [], action: [] };
+let sprintHistory = [];
+
+let currentSprint = {
+    name: 'Sprint 1',
+    goal: 'Xây dựng MVP hệ thống Quản lý Công việc & Scrum',
+    startDate: getFormattedDate(0),
+    endDate: getFormattedDate(14),
+    status: 'active'
+};
+
 let draggedTaskId = null;
 let deleteTargetId = null;
-let editMode = false;
+let editTaskId = null;
+let editBacklogId = null;
 
-// --- DOM References ---
-const todoList = document.getElementById('todo-list');
-const doingList = document.getElementById('doing-list');
-const doneList = document.getElementById('done-list');
-const taskModal = document.getElementById('taskModal');
-const deleteModal = document.getElementById('deleteModal');
-const taskForm = document.getElementById('taskForm');
-const modalTitle = document.getElementById('modalTitle');
-const toastContainer = document.getElementById('toastContainer');
+// Japanese Traditional Color Palettes for Sticky Notes (Washi Paper)
+const COLOR_PALETTE = {
+    '#F5F0E1': '和紙 Washi',
+    '#FADCE6': '桜 Sakura',
+    '#D6E5C3': '抹茶 Matcha',
+    '#C9D9E8': '藍 Ai',
+    '#DDD2E4': '藤 Fuji',
+    '#F0DCC0': '琥珀 Kohaku'
+};
 
-// --- Initialize ---
+// Priority mappings
+function getPriorityInfo(priority) {
+    const isVi = currentLang === 'vi';
+    switch (priority) {
+        case 'high':
+            return { text: isVi ? '高 · Cao' : 'High', class: 'priority-high' };
+        case 'low':
+            return { text: isVi ? '低 · Thấp' : 'Low', class: 'priority-low' };
+        case 'medium':
+        default:
+            return { text: isVi ? '中 · TB' : 'Medium', class: 'priority-medium' };
+    }
+}
+
+// ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    loadTasks();
-    renderAllTasks();
+    loadAllData();
+    // Initialize UI language
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+    });
+    renderAll();
     setupEventListeners();
+    setupBurndownChart();
 });
 
-// --- Event Listeners ---
+// Helper for dates
+function getFormattedDate(offsetDays = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    return d.toISOString().split('T')[0];
+}
+
+// ===== EVENT LISTENERS =====
 function setupEventListeners() {
-    // Open add modal
-    document.getElementById('btnOpenModal').addEventListener('click', () => openModal());
+    // Add task button
+    const btnOpen = document.getElementById('btnOpenModal');
+    if (btnOpen) btnOpen.addEventListener('click', () => openTaskModal());
 
-    // Close modals
-    document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-    document.getElementById('btnCancel').addEventListener('click', closeModal);
-    document.getElementById('btnCloseDelete').addEventListener('click', closeDeleteModal);
-    document.getElementById('btnCancelDelete').addEventListener('click', closeDeleteModal);
+    // Task form
+    const taskForm = document.getElementById('taskForm');
+    if (taskForm) taskForm.addEventListener('submit', handleTaskFormSubmit);
 
-    // Confirm delete
-    document.getElementById('btnConfirmDelete').addEventListener('click', confirmDelete);
+    // Sprint form
+    const sprintForm = document.getElementById('sprintForm');
+    if (sprintForm) sprintForm.addEventListener('submit', handleSprintFormSubmit);
 
-    // Submit form
-    taskForm.addEventListener('submit', handleFormSubmit);
+    // Backlog form
+    const backlogForm = document.getElementById('backlogForm');
+    if (backlogForm) backlogForm.addEventListener('submit', handleBacklogFormSubmit);
+
+    // Delete confirm button
+    const btnConfirmDelete = document.getElementById('btnConfirmDelete');
+    if (btnConfirmDelete) btnConfirmDelete.addEventListener('click', confirmDelete);
 
     // Color picker
-    document.querySelectorAll('.color-option').forEach(opt => {
+    document.querySelectorAll('#colorPicker .color-option').forEach(opt => {
         opt.addEventListener('click', () => {
-            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            document.querySelectorAll('#colorPicker .color-option').forEach(o => o.classList.remove('selected'));
             opt.classList.add('selected');
         });
-    });
-
-    // Close modal on overlay click
-    taskModal.addEventListener('click', (e) => {
-        if (e.target === taskModal) closeModal();
-    });
-    deleteModal.addEventListener('click', (e) => {
-        if (e.target === deleteModal) closeDeleteModal();
     });
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeModal();
-            closeDeleteModal();
+            closeAllModals();
         }
-        if (e.key === 'n' && e.ctrlKey) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
             e.preventDefault();
-            openModal();
+            openTaskModal();
         }
+    });
+
+    // Window resize redrawing burndown
+    window.addEventListener('resize', () => {
+        renderBurndown();
     });
 }
 
-// --- LocalStorage ---
-function saveTasks() {
-    localStorage.setItem('kanban-tasks', JSON.stringify(tasks));
+// ===== LOCAL STORAGE =====
+function saveAllData() {
+    localStorage.setItem('kanban_zen_tasks', JSON.stringify(tasks));
+    localStorage.setItem('scrum_zen_sprint', JSON.stringify(currentSprint));
+    localStorage.setItem('scrum_zen_backlog', JSON.stringify(backlog));
+    localStorage.setItem('scrum_zen_standups', JSON.stringify(standups));
+    localStorage.setItem('scrum_zen_retros', JSON.stringify(retros));
+    localStorage.setItem('scrum_zen_history', JSON.stringify(sprintHistory));
 }
 
-function loadTasks() {
-    const saved = localStorage.getItem('kanban-tasks');
-    if (saved) {
-        tasks = JSON.parse(saved);
+function loadAllData() {
+    const savedTasks = localStorage.getItem('kanban_zen_tasks');
+    const savedSprint = localStorage.getItem('scrum_zen_sprint');
+    const savedBacklog = localStorage.getItem('scrum_zen_backlog');
+    const savedStandups = localStorage.getItem('scrum_zen_standups');
+    const savedRetros = localStorage.getItem('scrum_zen_retros');
+    const savedHistory = localStorage.getItem('scrum_zen_history');
+
+    if (savedSprint) currentSprint = JSON.parse(savedSprint);
+    if (savedBacklog) backlog = JSON.parse(savedBacklog);
+    if (savedStandups) standups = JSON.parse(savedStandups);
+    if (savedRetros) retros = JSON.parse(savedRetros);
+    if (savedHistory) sprintHistory = JSON.parse(savedHistory);
+
+    if (savedTasks) {
+        tasks = JSON.parse(savedTasks);
     } else {
-        // Demo data
+        // Japanese Zen / Agile Default Starter Data
         tasks = [
             {
-                id: generateId(),
-                title: 'Thiết kế giao diện',
-                description: 'Thiết kế mockup cho trang chủ',
+                id: 'task-1',
+                title: 'Thiết kế kiến trúc hệ thống',
+                description: 'Phác thảo luồng dữ liệu Scrum & Kanban theo triết lý Kaizen',
                 priority: 'high',
-                color: '#F8BBD0',
-                status: 'todo',
-                dueDate: '2026-10-25',
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: generateId(),
-                title: 'Viết API backend',
-                description: 'Tạo REST API cho module người dùng',
-                priority: 'medium',
-                color: '#BBDEFB',
-                status: 'todo',
-                dueDate: '2026-10-28',
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: generateId(),
-                title: 'Cài đặt database',
-                description: 'Setup PostgreSQL và tạo schema',
-                priority: 'high',
-                color: '#FFF9C4',
-                status: 'doing',
-                dueDate: '2026-10-20',
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: generateId(),
-                title: 'Lên kế hoạch dự án',
-                description: 'Phân tích yêu cầu và lập timeline',
-                priority: 'low',
-                color: '#C8E6C9',
+                points: 5,
+                color: '#FADCE6', // Sakura
                 status: 'done',
-                dueDate: '2026-10-18',
+                dueDate: getFormattedDate(1),
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'task-2',
+                title: 'Tối ưu bảng màu Wabi-sabi',
+                description: 'Giảm độ tương phản chói gắt, dùng màu tự nhiên (Washi, Matcha, Indigo)',
+                priority: 'medium',
+                points: 3,
+                color: '#D6E5C3', // Matcha
+                status: 'doing',
+                dueDate: getFormattedDate(3),
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'task-3',
+                title: 'Biểu đồ Burndown theo thời gian thực',
+                description: 'Hiển thị tốc độ hoàn thành Story Points mỗi ngày trong Sprint',
+                priority: 'high',
+                points: 5,
+                color: '#C9D9E8', // Ai (Indigo)
+                status: 'todo',
+                dueDate: getFormattedDate(5),
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'task-4',
+                title: 'Quản lý Product Backlog & Story Points',
+                description: 'Hỗ trợ đưa User Story từ Backlog sang Kanban To-Do',
+                priority: 'medium',
+                points: 3,
+                color: '#F5F0E1', // Washi
+                status: 'todo',
+                dueDate: getFormattedDate(7),
                 createdAt: new Date().toISOString()
             }
         ];
-        saveTasks();
+
+        backlog = [
+            {
+                id: 'bl-1',
+                title: 'Là lập trình viên, tôi muốn nhận thông báo khi task quá hạn',
+                description: 'Hệ thống gửi cảnh báo nhẹ nhàng để không gây phân tâm',
+                priority: 'medium',
+                points: 2
+            },
+            {
+                id: 'bl-2',
+                title: 'Là Scrum Master, tôi muốn xuất báo cáo Velocity qua các Sprint',
+                description: 'Thống kê số story points hoàn thành trung bình để ước lượng chính xác',
+                priority: 'low',
+                points: 5
+            }
+        ];
+
+        standups = [
+            {
+                id: 'su-1',
+                date: 'Hôm nay',
+                text: 'Hôm qua: Hoàn thành thiết kế hệ thống. Hôm nay: Tập trung vào Burndown Chart & Backlog.'
+            }
+        ];
+
+        retros = {
+            good: [
+                'Giao diện phong cách Zen Nhật Bản dịu mắt, làm việc lâu không mỏi',
+                'Story points phân bổ hợp lý theo dãy Fibonacci'
+            ],
+            improve: [
+                'Cần kiểm soát Work In Progress (WIP) ở cột Doing chặt chẽ hơn'
+            ],
+            action: [
+                'Giới hạn tối đa 3 task trong cột Doing để tăng độ tập trung'
+            ]
+        };
+
+        sprintHistory = [
+            { name: 'Sprint 0', goal: 'Khởi tạo dự án & setup nền tảng', points: 14, completed: 14, velocity: 14 }
+        ];
+
+        saveAllData();
     }
 }
 
-// --- Generate ID ---
-function generateId() {
-    return 'task-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+// ===== RENDER EVERYTHING =====
+function renderAll() {
+    renderKanbanColumns();
+    renderScrumHeader();
+    renderScrumSprintPanel();
+    renderBacklog();
+    renderStandup();
+    renderRetro();
+    renderBurndown();
 }
 
-// --- Render Tasks ---
-function renderAllTasks() {
-    renderColumn('todo', todoList);
-    renderColumn('doing', doingList);
-    renderColumn('done', doneList);
-    updateCounts();
-}
+// ===== RENDER KANBAN COLUMNS =====
+function renderKanbanColumns() {
+    const todoList = document.getElementById('todo-list');
+    const doingList = document.getElementById('doing-list');
+    const doneList = document.getElementById('done-list');
 
-function renderColumn(status, listEl) {
-    // Keep empty state
-    const emptyState = listEl.querySelector('.empty-state');
-    listEl.innerHTML = '';
-    if (emptyState) listEl.appendChild(emptyState);
+    renderSingleColumn('todo', todoList);
+    renderSingleColumn('doing', doingList);
+    renderSingleColumn('done', doneList);
 
-    const columnTasks = tasks.filter(t => t.status === status);
-    columnTasks.forEach(task => {
-        const noteEl = createStickyNote(task);
-        listEl.appendChild(noteEl);
-    });
-}
-
-function createStickyNote(task) {
-    const note = document.createElement('div');
-    note.className = 'sticky-note';
-    note.id = task.id;
-    note.draggable = true;
-    note.style.backgroundColor = task.color;
-
-    // Random slight rotation for realistic sticky note effect
-    const rotation = (Math.random() - 0.5) * 3;
-    note.style.setProperty('--rotation', `${rotation}deg`);
-
-    // Priority label
-    const priorityLabels = {
-        low: { text: '🟢 Thấp', class: 'priority-low' },
-        medium: { text: '🟡 TB', class: 'priority-medium' },
-        high: { text: '🔴 Cao', class: 'priority-high' }
-    };
-    const priority = priorityLabels[task.priority] || priorityLabels.medium;
-
-    // Due date formatting
-    let dueDateHtml = '';
-    if (task.dueDate) {
-        const dueDate = new Date(task.dueDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const isOverdue = dueDate < today && task.status !== 'done';
-        const formattedDate = dueDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        dueDateHtml = `<span class="note-due ${isOverdue ? 'overdue' : ''}">📅 ${formattedDate}${isOverdue ? ' ⚠️' : ''}</span>`;
-    }
-
-    note.innerHTML = `
-        <div class="note-actions">
-            <button class="btn-edit-note" onclick="editTask('${task.id}')" title="Sửa">✏️</button>
-            <button class="btn-delete-note" onclick="deleteTask('${task.id}')" title="Xóa">🗑️</button>
-        </div>
-        <div class="note-title">${escapeHtml(task.title)}</div>
-        ${task.description ? `<div class="note-desc">${escapeHtml(task.description)}</div>` : ''}
-        <div class="note-meta">
-            <span class="note-priority ${priority.class}">${priority.text}</span>
-            ${dueDateHtml}
-        </div>
-    `;
-
-    // Drag events
-    note.addEventListener('dragstart', handleDragStart);
-    note.addEventListener('dragend', handleDragEnd);
-
-    // Touch events for mobile
-    note.addEventListener('touchstart', handleTouchStart, { passive: false });
-    note.addEventListener('touchmove', handleTouchMove, { passive: false });
-    note.addEventListener('touchend', handleTouchEnd);
-
-    return note;
-}
-
-// --- Escape HTML ---
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// --- Update Counts ---
-function updateCounts() {
+    // Counts
     const todoCount = tasks.filter(t => t.status === 'todo').length;
     const doingCount = tasks.filter(t => t.status === 'doing').length;
     const doneCount = tasks.filter(t => t.status === 'done').length;
@@ -224,12 +465,71 @@ function updateCounts() {
     document.getElementById('count-doing').textContent = doingCount;
     document.getElementById('count-done').textContent = doneCount;
 
-    document.getElementById('stat-todo').innerHTML = `📝 To Do: <strong>${todoCount}</strong>`;
-    document.getElementById('stat-doing').innerHTML = `🔧 Doing: <strong>${doingCount}</strong>`;
-    document.getElementById('stat-done').innerHTML = `✅ Done: <strong>${doneCount}</strong>`;
+    document.getElementById('statTodo').textContent = todoCount;
+    document.getElementById('statDoing').textContent = doingCount;
+    document.getElementById('statDone').textContent = doneCount;
 }
 
-// ===== DRAG & DROP =====
+function renderSingleColumn(status, container) {
+    const emptyState = container.querySelector('.empty-state');
+    container.innerHTML = '';
+    if (emptyState) container.appendChild(emptyState);
+
+    const colTasks = tasks.filter(t => t.status === status);
+    colTasks.forEach(task => {
+        const noteEl = createStickyNoteElement(task);
+        container.appendChild(noteEl);
+    });
+}
+
+function createStickyNoteElement(task) {
+    const note = document.createElement('div');
+    note.className = 'sticky-note';
+    note.id = task.id;
+    note.draggable = true;
+    note.style.backgroundColor = task.color || '#F5F0E1';
+
+    // Subtly varied rotation for organic paper feeling
+    const seed = (task.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 5) - 2;
+    note.style.setProperty('--rotation', `${seed * 0.8}deg`);
+
+    const priorityInfo = getPriorityInfo(task.priority);
+
+    // Due date
+    let dueHtml = '';
+    if (task.dueDate) {
+        const due = new Date(task.dueDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const isOverdue = due < today && task.status !== 'done';
+        const formatted = due.toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US', { day: '2-digit', month: '2-digit' });
+        dueHtml = `<span class="note-due ${isOverdue ? 'overdue' : ''}">📅 ${formatted}${isOverdue ? ' ⚠️' : ''}</span>`;
+    }
+
+    note.innerHTML = `
+        <div class="note-actions">
+            <button onclick="editTask('${task.id}')" title="${currentLang === 'vi' ? 'Chỉnh sửa' : 'Edit'}">✏️</button>
+            <button onclick="requestDeleteTask('${task.id}')" title="${currentLang === 'vi' ? 'Xóa' : 'Delete'}">✕</button>
+        </div>
+        <div class="note-title">${escapeHtml(task.title)}</div>
+        ${task.description ? `<div class="note-desc">${escapeHtml(task.description)}</div>` : ''}
+        <div class="note-meta">
+            <div class="note-tags">
+                <span class="note-sp">${task.points || 1} SP</span>
+                <span class="note-priority ${priorityInfo.class}">${priorityInfo.text}</span>
+            </div>
+            ${dueHtml}
+        </div>
+    `;
+
+    // Drag handlers
+    note.addEventListener('dragstart', handleDragStart);
+    note.addEventListener('dragend', handleDragEnd);
+
+    return note;
+}
+
+// ===== DRAG & DROP HANDLERS =====
 function handleDragStart(e) {
     draggedTaskId = e.target.closest('.sticky-note').id;
     e.target.closest('.sticky-note').classList.add('dragging');
@@ -239,10 +539,7 @@ function handleDragStart(e) {
 
 function handleDragEnd(e) {
     e.target.classList.remove('dragging');
-    document.querySelectorAll('.task-list').forEach(list => {
-        list.classList.remove('drag-over');
-    });
-    document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+    document.querySelectorAll('.task-list').forEach(list => list.classList.remove('drag-over'));
     draggedTaskId = null;
 }
 
@@ -251,32 +548,13 @@ function handleDragOver(e) {
     e.dataTransfer.dropEffect = 'move';
     const list = e.currentTarget;
     list.classList.add('drag-over');
-
-    // Find the closest note to insert before
-    const afterElement = getDragAfterElement(list, e.clientY);
-
-    // Remove existing indicators
-    document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
-
-    // Add drop indicator
-    const indicator = document.createElement('div');
-    indicator.className = 'drop-indicator';
-
-    if (afterElement) {
-        list.insertBefore(indicator, afterElement);
-    } else {
-        list.appendChild(indicator);
-    }
 }
 
 function handleDragLeave(e) {
-    // Only remove if actually leaving the list
     const list = e.currentTarget;
     const rect = list.getBoundingClientRect();
-    if (e.clientX < rect.left || e.clientX > rect.right || 
-        e.clientY < rect.top || e.clientY > rect.bottom) {
+    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
         list.classList.remove('drag-over');
-        list.querySelectorAll('.drop-indicator').forEach(el => el.remove());
     }
 }
 
@@ -284,225 +562,543 @@ function handleDrop(e) {
     e.preventDefault();
     const list = e.currentTarget;
     list.classList.remove('drag-over');
-    document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
 
     if (!draggedTaskId) return;
 
-    const column = list.closest('.column');
-    const newStatus = column.dataset.status;
+    const targetColumn = list.closest('.column');
+    const targetStatus = targetColumn.dataset.status;
+
     const task = tasks.find(t => t.id === draggedTaskId);
+    if (!task) return;
 
-    if (task) {
-        const oldStatus = task.status;
-        task.status = newStatus;
+    const prevStatus = task.status;
+    task.status = targetStatus;
 
-        // Reorder within the tasks array based on drop position
-        const afterElement = getDragAfterElement(list, e.clientY);
-        const columnTasks = tasks.filter(t => t.status === newStatus && t.id !== task.id);
+    if (targetStatus === 'done' && prevStatus !== 'done') {
+        task.completedAt = new Date().toISOString();
+    }
 
-        if (afterElement) {
-            const afterTask = tasks.find(t => t.id === afterElement.id);
-            const afterIndex = columnTasks.indexOf(afterTask);
-            columnTasks.splice(afterIndex, 0, task);
-        } else {
-            columnTasks.push(task);
-        }
+    saveAllData();
+    renderAll();
 
-        // Rebuild tasks array maintaining order
-        const otherTasks = tasks.filter(t => t.status !== newStatus && t.id !== task.id);
-        tasks = [...otherTasks, ...columnTasks];
-
-        saveTasks();
-        renderAllTasks();
-
-        if (oldStatus !== newStatus) {
-            const statusNames = { todo: 'To Do', doing: 'Doing', done: 'Done' };
-            showToast(`Di chuyển "${task.title}" sang ${statusNames[newStatus]}`, 'info');
-        }
+    if (prevStatus !== targetStatus) {
+        const colNamesVi = { todo: 'To Do', doing: 'Doing', done: 'Done' };
+        showToast(t('toastMoved', { status: colNamesVi[targetStatus] }), 'info');
     }
 }
 
-function getDragAfterElement(list, y) {
-    const notes = [...list.querySelectorAll('.sticky-note:not(.dragging)')];
+// ===== SCRUM SPRINT DISPLAY =====
+function renderScrumHeader() {
+    document.getElementById('sprintName').textContent = currentSprint.name;
 
-    return notes.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
+    const end = new Date(currentSprint.endDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-        if (offset < 0 && offset > closest.offset) {
-            return { offset, element: child };
-        } else {
-            return closest;
-        }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+    const diffTime = end - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const sprintDaysEl = document.getElementById('sprintDays');
+    if (diffDays > 0) {
+        sprintDaysEl.textContent = t('sprintDaysRemaining', { days: diffDays });
+    } else if (diffDays === 0) {
+        sprintDaysEl.textContent = t('sprintDueToday');
+    } else {
+        sprintDaysEl.textContent = t('sprintOverdue', { days: Math.abs(diffDays) });
+    }
 }
 
-// ===== TOUCH SUPPORT (Mobile) =====
-let touchData = { startX: 0, startY: 0, element: null, clone: null };
+function renderScrumSprintPanel() {
+    // Sprint Goal
+    const goalEl = document.getElementById('sprintGoalDisplay');
+    goalEl.textContent = currentSprint.goal || t('noGoal');
 
-function handleTouchStart(e) {
-    const note = e.target.closest('.sticky-note');
-    if (!note || e.target.closest('.note-actions')) return;
+    // Points calculation
+    const totalPoints = tasks.reduce((sum, t) => sum + (parseInt(t.points) || 0), 0);
+    const donePoints = tasks
+        .filter(t => t.status === 'done')
+        .reduce((sum, t) => sum + (parseInt(t.points) || 0), 0);
 
-    touchData.element = note;
-    touchData.startX = e.touches[0].clientX;
-    touchData.startY = e.touches[0].clientY;
+    const percent = totalPoints > 0 ? Math.round((donePoints / totalPoints) * 100) : 0;
 
-    // Long press to start drag
-    touchData.timeout = setTimeout(() => {
-        draggedTaskId = note.id;
-        note.classList.add('dragging');
+    // Update Progress Ring
+    document.getElementById('progressPercent').textContent = `${percent}%`;
+    const circle = document.getElementById('progressCircle');
+    if (circle) {
+        const circumference = 264;
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+    }
 
-        // Create clone for visual feedback
-        touchData.clone = note.cloneNode(true);
-        touchData.clone.style.position = 'fixed';
-        touchData.clone.style.zIndex = '9999';
-        touchData.clone.style.pointerEvents = 'none';
-        touchData.clone.style.width = note.offsetWidth + 'px';
-        touchData.clone.style.opacity = '0.85';
-        touchData.clone.style.transform = 'rotate(3deg) scale(1.05)';
-        document.body.appendChild(touchData.clone);
+    // SP display
+    document.getElementById('sprintPoints').textContent = `${donePoints} / ${totalPoints} SP`;
 
-        // Haptic feedback if available
-        if (navigator.vibrate) navigator.vibrate(50);
-    }, 300);
+    // Velocity calculate from history
+    let velocity = totalPoints;
+    if (sprintHistory.length > 0) {
+        const sumV = sprintHistory.reduce((s, h) => s + (h.completed || 0), 0);
+        velocity = Math.round(sumV / sprintHistory.length);
+    }
+    document.getElementById('sprintVelocity').textContent = `${velocity} SP/Sprint`;
 }
 
-function handleTouchMove(e) {
-    if (!draggedTaskId) {
-        // Cancel long press if moved too much
-        const dx = e.touches[0].clientX - touchData.startX;
-        const dy = e.touches[0].clientY - touchData.startY;
-        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-            clearTimeout(touchData.timeout);
-        }
+// ===== BURNDOWN CHART =====
+function setupBurndownChart() {
+    renderBurndown();
+}
+
+function renderBurndown() {
+    const canvas = document.getElementById('burndownChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // Padding
+    const padX = 40;
+    const padY = 25;
+    const chartW = width - padX * 2;
+    const chartH = height - padY * 2;
+
+    const totalPoints = tasks.reduce((sum, t) => sum + (parseInt(t.points) || 0), 0) || 10;
+    const donePoints = tasks.filter(t => t.status === 'done').reduce((sum, t) => sum + (parseInt(t.points) || 0), 0);
+    const remainingPoints = totalPoints - donePoints;
+
+    const totalDays = 10;
+
+    // Draw Grid Lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.font = '10px "Be Vietnam Pro", sans-serif';
+    ctx.fillStyle = '#6f717d';
+
+    for (let i = 0; i <= 4; i++) {
+        const y = padY + (chartH / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(padX, y);
+        ctx.lineTo(padX + chartW, y);
+        ctx.stroke();
+
+        const pt = Math.round(totalPoints - (totalPoints / 4) * i);
+        ctx.textAlign = 'right';
+        ctx.fillText(`${pt}p`, padX - 8, y + 3);
+    }
+
+    // Ideal Burndown Line (Dashed Slate)
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#5b82a6';
+    ctx.lineWidth = 2;
+    ctx.moveTo(padX, padY);
+    ctx.lineTo(padX + chartW, padY + chartH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Actual Burndown Line (Amber Line)
+    ctx.beginPath();
+    ctx.strokeStyle = '#c48b48';
+    ctx.lineWidth = 2.5;
+
+    const actualPoints = [
+        totalPoints,
+        totalPoints,
+        Math.max(0, totalPoints - 3),
+        remainingPoints
+    ];
+
+    actualPoints.forEach((pt, idx) => {
+        const x = padX + (chartW / (totalDays - 1)) * idx;
+        const y = padY + chartH - (pt / totalPoints) * chartH;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Draw dots on actual points
+    actualPoints.forEach((pt, idx) => {
+        const x = padX + (chartW / (totalDays - 1)) * idx;
+        const y = padY + chartH - (pt / totalPoints) * chartH;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#18191f';
+        ctx.fill();
+        ctx.strokeStyle = '#c48b48';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+
+    // Legend
+    ctx.font = '9px "Be Vietnam Pro", sans-serif';
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = '#5b82a6';
+    ctx.fillRect(padX + 10, height - 10, 12, 3);
+    ctx.fillStyle = '#a7a9b2';
+    ctx.fillText(t('burndownIdeal'), padX + 26, height - 7);
+
+    ctx.fillStyle = '#c48b48';
+    ctx.fillRect(padX + 90, height - 10, 12, 3);
+    ctx.fillStyle = '#a7a9b2';
+    ctx.fillText(t('burndownActual'), padX + 106, height - 7);
+}
+
+// ===== SCRUM TABS =====
+function switchScrumTab(tabName) {
+    document.querySelectorAll('.scrum-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tabName);
+    });
+
+    document.querySelectorAll('.scrum-content').forEach(c => {
+        c.classList.add('hidden');
+    });
+
+    const activeContent = document.getElementById(`tab-${tabName}`);
+    if (activeContent) activeContent.classList.remove('hidden');
+
+    if (tabName === 'sprint') {
+        setTimeout(renderBurndown, 50);
+    }
+}
+
+// ===== PRODUCT BACKLOG =====
+function renderBacklog() {
+    const list = document.getElementById('backlogList');
+    if (!list) return;
+
+    if (backlog.length === 0) {
+        list.innerHTML = `
+            <div class="empty-standup">
+                <span>📦</span>
+                <p>${t('emptyBacklog')}</p>
+            </div>
+        `;
         return;
     }
 
+    list.innerHTML = '';
+    backlog.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'backlog-card';
+
+        const priorityInfo = getPriorityInfo(item.priority);
+
+        card.innerHTML = `
+            <div class="backlog-header">
+                <span class="backlog-title">${escapeHtml(item.title)}</span>
+                <span class="note-sp">${item.points || 1} SP</span>
+            </div>
+            ${item.description ? `<p class="backlog-criteria">${escapeHtml(item.description)}</p>` : ''}
+            <div class="backlog-footer">
+                <span class="note-priority ${priorityInfo.class}">${priorityInfo.text}</span>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-sprint-add" onclick="moveToSprint('${item.id}')" title="${t('btnMoveToSprint')}">${t('btnMoveToSprint')}</button>
+                    <button class="btn-icon" onclick="deleteBacklogItem('${item.id}')" title="${currentLang === 'vi' ? 'Xóa' : 'Delete'}">✕</button>
+                </div>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function addBacklogItem() {
+    editBacklogId = null;
+    document.getElementById('backlogForm').reset();
+    document.getElementById('backlogId').value = '';
+    document.getElementById('backlogModalTitle').textContent = t('addBacklogTitle');
+    document.getElementById('backlogModal').classList.add('active');
+}
+
+function closeBacklogModal() {
+    document.getElementById('backlogModal').classList.remove('active');
+}
+
+function handleBacklogFormSubmit(e) {
     e.preventDefault();
-    const touch = e.touches[0];
+    const title = document.getElementById('backlogTitle').value.trim();
+    if (!title) return;
 
-    if (touchData.clone) {
-        touchData.clone.style.left = (touch.clientX - touchData.clone.offsetWidth / 2) + 'px';
-        touchData.clone.style.top = (touch.clientY - touchData.clone.offsetHeight / 2) + 'px';
+    const desc = document.getElementById('backlogDesc').value.trim();
+    const priority = document.getElementById('backlogPriority').value;
+    const points = parseInt(document.getElementById('backlogPoints').value) || 3;
+
+    backlog.push({
+        id: 'bl-' + Date.now(),
+        title,
+        description: desc,
+        priority,
+        points
+    });
+
+    saveAllData();
+    renderBacklog();
+    closeBacklogModal();
+    showToast(t('toastAdded', { title }), 'success');
+}
+
+function deleteBacklogItem(id) {
+    const item = backlog.find(b => b.id === id);
+    const title = item ? item.title : '';
+    backlog = backlog.filter(b => b.id !== id);
+    saveAllData();
+    renderBacklog();
+    showToast(t('toastDeleted', { title }), 'info');
+}
+
+function moveToSprint(backlogId) {
+    const item = backlog.find(b => b.id === backlogId);
+    if (!item) return;
+
+    // Convert into Kanban Task in To Do
+    const newTask = {
+        id: 'task-' + Date.now(),
+        title: item.title,
+        description: item.description,
+        priority: item.priority,
+        points: item.points,
+        color: '#F5F0E1', // Default washi
+        status: 'todo',
+        dueDate: currentSprint.endDate,
+        createdAt: new Date().toISOString()
+    };
+
+    tasks.push(newTask);
+    backlog = backlog.filter(b => b.id !== backlogId);
+
+    saveAllData();
+    renderAll();
+    showToast(t('toastBacklogMoved', { title: item.title }), 'success');
+}
+
+// ===== DAILY STANDUP =====
+function renderStandup() {
+    const list = document.getElementById('standupList');
+    if (!list) return;
+
+    if (standups.length === 0) {
+        list.innerHTML = `
+            <div class="empty-standup">
+                <span>📝</span>
+                <p>${t('emptyStandup')}</p>
+            </div>
+        `;
+        return;
     }
 
-    // Highlight column under touch
-    document.querySelectorAll('.task-list').forEach(list => {
-        const rect = list.getBoundingClientRect();
-        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-            list.classList.add('drag-over');
-        } else {
-            list.classList.remove('drag-over');
-        }
+    list.innerHTML = '';
+    standups.forEach(su => {
+        const item = document.createElement('div');
+        item.className = 'standup-item';
+        item.innerHTML = `
+            <div class="standup-text">
+                <div class="standup-date">${su.date}</div>
+                ${escapeHtml(su.text)}
+            </div>
+            <button class="standup-delete" onclick="deleteStandup('${su.id}')" title="${currentLang === 'vi' ? 'Xóa' : 'Delete'}">✕</button>
+        `;
+        list.appendChild(item);
     });
 }
 
-function handleTouchEnd(e) {
-    clearTimeout(touchData.timeout);
-
-    if (!draggedTaskId) return;
-
-    const touch = e.changedTouches[0];
-
-    // Find drop target
-    document.querySelectorAll('.task-list').forEach(list => {
-        const rect = list.getBoundingClientRect();
-        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-            const column = list.closest('.column');
-            const newStatus = column.dataset.status;
-            const task = tasks.find(t => t.id === draggedTaskId);
-
-            if (task) {
-                const oldStatus = task.status;
-                task.status = newStatus;
-                saveTasks();
-                renderAllTasks();
-
-                if (oldStatus !== newStatus) {
-                    const statusNames = { todo: 'To Do', doing: 'Doing', done: 'Done' };
-                    showToast(`Di chuyển "${task.title}" sang ${statusNames[newStatus]}`, 'info');
-                }
-            }
-        }
-        list.classList.remove('drag-over');
-    });
-
-    // Cleanup
-    if (touchData.clone) {
-        touchData.clone.remove();
-        touchData.clone = null;
+function addStandupNote() {
+    const text = prompt(t('standupPrompt'));
+    if (text && text.trim()) {
+        const todayStr = new Date().toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US', { weekday: 'short', day: '2-digit', month: '2-digit' });
+        standups.unshift({
+            id: 'su-' + Date.now(),
+            date: todayStr,
+            text: text.trim()
+        });
+        saveAllData();
+        renderStandup();
+        showToast(t('toastStandupSaved'), 'success');
     }
-    if (touchData.element) {
-        touchData.element.classList.remove('dragging');
-    }
-    draggedTaskId = null;
 }
 
-// ===== MODAL MANAGEMENT =====
-function openModal(taskId = null) {
-    editMode = !!taskId;
-    taskForm.reset();
-    document.getElementById('taskId').value = '';
+function deleteStandup(id) {
+    standups = standups.filter(s => s.id !== id);
+    saveAllData();
+    renderStandup();
+}
 
-    // Reset color picker
-    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-    document.querySelector('.color-option[data-color="#FFF9C4"]').classList.add('selected');
+// ===== RETROSPECTIVE (KPT) =====
+function renderRetro() {
+    renderRetroCategory('good', 'retroGood');
+    renderRetroCategory('improve', 'retroImprove');
+    renderRetroCategory('action', 'retroAction');
+}
 
-    if (editMode) {
+function renderRetroCategory(key, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const items = retros[key] || [];
+    container.innerHTML = '';
+
+    if (items.length === 0) {
+        container.innerHTML = `<span style="font-size:0.7rem; color:var(--text-tertiary); padding:4px;">${t('retroEmpty')}</span>`;
+        return;
+    }
+
+    items.forEach((text, idx) => {
+        const el = document.createElement('div');
+        el.className = 'retro-item';
+        el.innerHTML = `
+            <span>${escapeHtml(text)}</span>
+            <button onclick="deleteRetroItem('${key}', ${idx})" title="${currentLang === 'vi' ? 'Xóa' : 'Delete'}">✕</button>
+        `;
+        container.appendChild(el);
+    });
+}
+
+function addRetroItem(category) {
+    const promptKeys = {
+        good: 'retroPromptGood',
+        improve: 'retroPromptImprove',
+        action: 'retroPromptAction'
+    };
+
+    const text = prompt(t(promptKeys[category]));
+    if (text && text.trim()) {
+        if (!retros[category]) retros[category] = [];
+        retros[category].push(text.trim());
+        saveAllData();
+        renderRetro();
+        showToast(t('toastRetroSaved'), 'success');
+    }
+}
+
+function deleteRetroItem(category, index) {
+    if (retros[category]) {
+        retros[category].splice(index, 1);
+        saveAllData();
+        renderRetro();
+    }
+}
+
+// ===== SPRINT MODAL & END SPRINT =====
+function openSprintModal() {
+    document.getElementById('sprintNameInput').value = currentSprint.name;
+    document.getElementById('sprintGoalInput').value = currentSprint.goal;
+    document.getElementById('sprintStart').value = currentSprint.startDate;
+    document.getElementById('sprintEnd').value = currentSprint.endDate;
+    document.getElementById('sprintModal').classList.add('active');
+}
+
+function closeSprintModal() {
+    document.getElementById('sprintModal').classList.remove('active');
+}
+
+function handleSprintFormSubmit(e) {
+    e.preventDefault();
+    currentSprint.name = document.getElementById('sprintNameInput').value.trim() || 'Sprint';
+    currentSprint.goal = document.getElementById('sprintGoalInput').value.trim();
+    currentSprint.startDate = document.getElementById('sprintStart').value;
+    currentSprint.endDate = document.getElementById('sprintEnd').value;
+
+    saveAllData();
+    renderAll();
+    closeSprintModal();
+    showToast(t('toastSprintUpdated'), 'success');
+}
+
+function endCurrentSprint() {
+    if (!confirm(t('confirmEndSprint', { name: currentSprint.name }))) {
+        return;
+    }
+
+    const doneTasks = tasks.filter(t => t.status === 'done');
+    const completedSP = doneTasks.reduce((s, t) => s + (parseInt(t.points) || 0), 0);
+    const totalSP = tasks.reduce((s, t) => s + (parseInt(t.points) || 0), 0);
+
+    // Save to history
+    sprintHistory.push({
+        name: currentSprint.name,
+        goal: currentSprint.goal,
+        points: totalSP,
+        completed: completedSP,
+        endDate: new Date().toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US')
+    });
+
+    // Remove done tasks, keep remaining in To-do/Doing
+    tasks = tasks.filter(t => t.status !== 'done');
+
+    // Auto increment Sprint number
+    const nextNum = (parseInt(currentSprint.name.replace(/\D/g, '')) || 1) + 1;
+    currentSprint.name = `Sprint ${nextNum}`;
+    currentSprint.startDate = getFormattedDate(0);
+    currentSprint.endDate = getFormattedDate(14);
+    currentSprint.goal = currentLang === 'vi' ? 'Mục tiêu Sprint mới' : 'New Sprint Goal';
+
+    // Clear sprint standup/retro for new sprint
+    standups = [];
+    retros = { good: [], improve: [], action: [] };
+
+    saveAllData();
+    renderAll();
+    closeSprintModal();
+    showToast(t('toastSprintEnded', { name: currentSprint.name }), 'success');
+}
+
+// ===== TASK MODAL & CRUD =====
+function openTaskModal(taskId = null) {
+    editTaskId = taskId;
+    const form = document.getElementById('taskForm');
+    form.reset();
+
+    // Default select Washi color
+    document.querySelectorAll('#colorPicker .color-option').forEach(o => o.classList.remove('selected'));
+    document.querySelector('#colorPicker .color-option[data-color="#F5F0E1"]').classList.add('selected');
+
+    if (taskId) {
         const task = tasks.find(t => t.id === taskId);
         if (!task) return;
 
-        modalTitle.textContent = '✏️ Chỉnh sửa công việc';
+        document.getElementById('modalTitle').textContent = t('modalEditTaskTitle');
         document.getElementById('taskId').value = task.id;
         document.getElementById('taskTitle').value = task.title;
         document.getElementById('taskDesc').value = task.description || '';
-        document.getElementById('taskPriority').value = task.priority;
-        document.getElementById('taskStatus').value = task.status;
+        document.getElementById('taskPriority').value = task.priority || 'medium';
+        document.getElementById('taskPoints').value = task.points || '3';
+        document.getElementById('taskStatus').value = task.status || 'todo';
         document.getElementById('taskDueDate').value = task.dueDate || '';
 
         // Select color
-        document.querySelectorAll('.color-option').forEach(o => {
+        document.querySelectorAll('#colorPicker .color-option').forEach(o => {
             o.classList.toggle('selected', o.dataset.color === task.color);
         });
     } else {
-        modalTitle.textContent = '✏️ Thêm công việc mới';
+        document.getElementById('modalTitle').textContent = t('modalAddTaskTitle');
+        document.getElementById('taskId').value = '';
+        document.getElementById('taskPoints').value = '3';
+        document.getElementById('taskPriority').value = 'medium';
+        document.getElementById('taskStatus').value = 'todo';
     }
 
-    taskModal.classList.add('active');
-    setTimeout(() => document.getElementById('taskTitle').focus(), 100);
+    document.getElementById('taskModal').classList.add('active');
+    setTimeout(() => document.getElementById('taskTitle').focus(), 80);
 }
 
 function closeModal() {
-    taskModal.classList.remove('active');
-    taskForm.reset();
-    editMode = false;
+    document.getElementById('taskModal').classList.remove('active');
+    editTaskId = null;
 }
 
-function closeDeleteModal() {
-    deleteModal.classList.remove('active');
-    deleteTargetId = null;
-}
-
-// ===== FORM SUBMIT =====
-function handleFormSubmit(e) {
+function handleTaskFormSubmit(e) {
     e.preventDefault();
-
     const title = document.getElementById('taskTitle').value.trim();
-    if (!title) {
-        showToast('Vui lòng nhập tiêu đề công việc!', 'warning');
-        return;
-    }
+    if (!title) return;
 
-    const selectedColor = document.querySelector('.color-option.selected');
-    const color = selectedColor ? selectedColor.dataset.color : '#FFF9C4';
+    const selectedColor = document.querySelector('#colorPicker .color-option.selected');
+    const color = selectedColor ? selectedColor.dataset.color : '#F5F0E1';
 
     const taskData = {
         title: title,
         description: document.getElementById('taskDesc').value.trim(),
         priority: document.getElementById('taskPriority').value,
+        points: parseInt(document.getElementById('taskPoints').value) || 3,
         color: color,
         status: document.getElementById('taskStatus').value,
         dueDate: document.getElementById('taskDueDate').value || null
@@ -510,76 +1106,87 @@ function handleFormSubmit(e) {
 
     const taskId = document.getElementById('taskId').value;
 
-    if (editMode && taskId) {
-        // Update existing task
-        const index = tasks.findIndex(t => t.id === taskId);
-        if (index !== -1) {
-            tasks[index] = { ...tasks[index], ...taskData };
-            showToast(`Đã cập nhật "${title}"`, 'success');
+    if (editTaskId && taskId) {
+        const idx = tasks.findIndex(t => t.id === taskId);
+        if (idx !== -1) {
+            tasks[idx] = { ...tasks[idx], ...taskData };
+            showToast(t('toastUpdated', { title }), 'success');
         }
     } else {
-        // Create new task
         const newTask = {
-            id: generateId(),
+            id: 'task-' + Date.now(),
             ...taskData,
             createdAt: new Date().toISOString()
         };
         tasks.push(newTask);
-        showToast(`Đã thêm "${title}" vào ${getStatusName(taskData.status)}`, 'success');
+        showToast(t('toastAdded', { title }), 'success');
     }
 
-    saveTasks();
-    renderAllTasks();
+    saveAllData();
+    renderAll();
     closeModal();
 }
 
-// ===== EDIT & DELETE =====
 function editTask(taskId) {
-    openModal(taskId);
+    openTaskModal(taskId);
 }
 
-function deleteTask(taskId) {
+function requestDeleteTask(taskId) {
     deleteTargetId = taskId;
-    deleteModal.classList.add('active');
+    document.getElementById('deleteModal').classList.add('active');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+    deleteTargetId = null;
 }
 
 function confirmDelete() {
     if (!deleteTargetId) return;
-
     const task = tasks.find(t => t.id === deleteTargetId);
     const title = task ? task.title : '';
 
     tasks = tasks.filter(t => t.id !== deleteTargetId);
-    saveTasks();
-    renderAllTasks();
+    saveAllData();
+    renderAll();
     closeDeleteModal();
+    showToast(t('toastDeleted', { title }), 'info');
+}
 
-    showToast(`Đã xóa "${title}"`, 'error');
+function closeAllModals() {
+    closeModal();
+    closeDeleteModal();
+    closeSprintModal();
+    closeBacklogModal();
 }
 
 // ===== UTILITIES =====
-function getStatusName(status) {
-    const names = { todo: 'To Do', doing: 'Doing', done: 'Done' };
-    return names[status] || status;
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
 
     const icons = {
-        success: '✅',
-        info: 'ℹ️',
-        warning: '⚠️',
-        error: '🗑️'
+        success: '🌸',
+        info: '🍵',
+        warning: '🍂',
+        error: '🎋'
     };
 
-    toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> ${message}`;
-    toastContainer.appendChild(toast);
+    toast.innerHTML = `<span>${icons[type] || '🍵'}</span> ${message}`;
+    container.appendChild(toast);
 
     setTimeout(() => {
         toast.classList.add('toast-out');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+        setTimeout(() => toast.remove(), 260);
+    }, 2800);
 }
-

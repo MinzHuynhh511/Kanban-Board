@@ -3,169 +3,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 Kanban Board - Quản lý Công việc</title>
+    <title>看板 Kanban — Agile & Scrum Board</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Patrick+Hand&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
+
+    <!-- ===== HEADER ===== -->
     <header class="header">
         <div class="header-left">
-            <h1>📋 Kanban Board</h1>
-            <p class="subtitle">Quản lý công việc hiệu quả</p>
+            <div class="logo">
+                <span class="logo-kanji">看板</span>
+                <div class="logo-text">
+                    <h1>Kanban Board</h1>
+                    <p class="subtitle" data-i18n="appSubtitle">アジャイル · Agile & Scrum</p>
+                </div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="sprint-badge" id="sprintBadge">
+                <span class="sprint-icon">🏃</span>
+                <span id="sprintName">Sprint 1</span>
+                <span class="sprint-separator">·</span>
+                <span id="sprintDays" class="sprint-days">14 ngày còn lại</span>
+            </div>
         </div>
         <div class="header-right">
-            <div class="stats">
-                <span class="stat" id="stat-todo">📝 To Do: <strong>0</strong></span>
-                <span class="stat" id="stat-doing">🔧 Doing: <strong>0</strong></span>
-                <span class="stat" id="stat-done">✅ Done: <strong>0</strong></span>
+            <!-- Language Switcher -->
+            <div class="lang-switch" id="langSwitch" title="Chuyển ngôn ngữ / Change language">
+                <button class="lang-btn active" data-lang="vi" onclick="setLanguage('vi')">VI</button>
+                <button class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN</button>
             </div>
-            <button class="btn-add-task" id="btnOpenModal" title="Thêm công việc mới">
-                <span class="plus-icon">+</span> Thêm công việc
+
+            <!-- Quick Stats -->
+            <div class="stats">
+                <span class="stat stat-todo" title="To Do"><span class="stat-dot todo-dot"></span><span data-i18n="statTodoLabel">待</span> <strong id="statTodo">0</strong></span>
+                <span class="stat stat-doing" title="Doing"><span class="stat-dot doing-dot"></span><span data-i18n="statDoingLabel">進</span> <strong id="statDoing">0</strong></span>
+                <span class="stat stat-done" title="Done"><span class="stat-dot done-dot"></span><span data-i18n="statDoneLabel">完</span> <strong id="statDone">0</strong></span>
+            </div>
+
+            <!-- Add Task Button -->
+            <button class="btn-add" id="btnOpenModal" title="Thêm công việc (Ctrl+N)">
+                <span>＋</span> <span data-i18n="btnAddTask">Thêm việc</span>
             </button>
         </div>
     </header>
 
-    <!-- Board -->
-    <main class="board">
-        <!-- TO DO Column -->
-        <div class="column" data-status="todo">
-            <div class="column-header todo-header">
-                <div class="column-title">
-                    <span class="column-icon">📝</span>
-                    <h2>To Do</h2>
-                </div>
-                <span class="task-count" id="count-todo">0</span>
-            </div>
-            <div class="task-list" id="todo-list" 
-                 ondrop="handleDrop(event)" 
-                 ondragover="handleDragOver(event)" 
-                 ondragleave="handleDragLeave(event)">
-                <div class="empty-state">
-                    <span class="empty-icon">📌</span>
-                    <p>Kéo thả sticky note vào đây<br>hoặc nhấn <strong>+ Thêm công việc</strong></p>
-                </div>
-            </div>
-        </div>
+    <!-- ===== MAIN LAYOUT ===== -->
+    <main class="main-layout">
 
-        <!-- DOING Column -->
-        <div class="column" data-status="doing">
-            <div class="column-header doing-header">
-                <div class="column-title">
-                    <span class="column-icon">🔧</span>
-                    <h2>Doing</h2>
-                </div>
-                <span class="task-count" id="count-doing">0</span>
-            </div>
-            <div class="task-list" id="doing-list" 
-                 ondrop="handleDrop(event)" 
-                 ondragover="handleDragOver(event)" 
-                 ondragleave="handleDragLeave(event)">
-                <div class="empty-state">
-                    <span class="empty-icon">⚡</span>
-                    <p>Kéo sticky note vào đây<br>khi bắt đầu làm việc</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- DONE Column -->
-        <div class="column" data-status="done">
-            <div class="column-header done-header">
-                <div class="column-title">
-                    <span class="column-icon">✅</span>
-                    <h2>Done</h2>
-                </div>
-                <span class="task-count" id="count-done">0</span>
-            </div>
-            <div class="task-list" id="done-list" 
-                 ondrop="handleDrop(event)" 
-                 ondragover="handleDragOver(event)" 
-                 ondragleave="handleDragLeave(event)">
-                <div class="empty-state">
-                    <span class="empty-icon">🎉</span>
-                    <p>Kéo sticky note vào đây<br>khi hoàn thành công việc</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Add/Edit Task Modal -->
-    <div class="modal-overlay" id="taskModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modalTitle">✏️ Thêm công việc mới</h3>
-                <button class="btn-close" id="btnCloseModal">&times;</button>
-            </div>
-            <form id="taskForm">
-                <div class="form-group">
-                    <label for="taskTitle">Tiêu đề <span class="required">*</span></label>
-                    <input type="text" id="taskTitle" placeholder="Nhập tiêu đề công việc..." required maxlength="100">
-                </div>
-                <div class="form-group">
-                    <label for="taskDesc">Mô tả</label>
-                    <textarea id="taskDesc" placeholder="Nhập mô tả chi tiết..." rows="3" maxlength="500"></textarea>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="taskPriority">Độ ưu tiên</label>
-                        <select id="taskPriority">
-                            <option value="low">🟢 Thấp</option>
-                            <option value="medium" selected>🟡 Trung bình</option>
-                            <option value="high">🔴 Cao</option>
-                        </select>
+        <!-- ===== KANBAN BOARD (LEFT) ===== -->
+        <section class="kanban-board">
+            <!-- TO DO -->
+            <div class="column" data-status="todo">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="col-marker todo-marker"></span>
+                        <h2 data-i18n="colTodoTitle">待機 · Cần làm</h2>
                     </div>
-                    <div class="form-group">
-                        <label for="taskColor">Màu Sticky Note</label>
-                        <div class="color-picker" id="colorPicker">
-                            <div class="color-option selected" data-color="#FFF9C4" style="background:#FFF9C4" title="Vàng"></div>
-                            <div class="color-option" data-color="#F8BBD0" style="background:#F8BBD0" title="Hồng"></div>
-                            <div class="color-option" data-color="#C8E6C9" style="background:#C8E6C9" title="Xanh lá"></div>
-                            <div class="color-option" data-color="#BBDEFB" style="background:#BBDEFB" title="Xanh dương"></div>
-                            <div class="color-option" data-color="#E1BEE7" style="background:#E1BEE7" title="Tím"></div>
-                            <div class="color-option" data-color="#FFE0B2" style="background:#FFE0B2" title="Cam"></div>
+                    <span class="task-count" id="count-todo">0</span>
+                </div>
+                <div class="task-list" id="todo-list"
+                     ondrop="handleDrop(event)"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)">
+                    <div class="empty-state">
+                        <span class="empty-kanji">空</span>
+                        <p data-i18n="emptyTodo">Kéo thả sticky note vào đây</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOING -->
+            <div class="column" data-status="doing">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="col-marker doing-marker"></span>
+                        <h2 data-i18n="colDoingTitle">進行 · Đang làm</h2>
+                    </div>
+                    <span class="task-count" id="count-doing">0</span>
+                </div>
+                <div class="task-list" id="doing-list"
+                     ondrop="handleDrop(event)"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)">
+                    <div class="empty-state">
+                        <span class="empty-kanji">動</span>
+                        <p data-i18n="emptyDoing">Đang thực hiện</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DONE -->
+            <div class="column" data-status="done">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="col-marker done-marker"></span>
+                        <h2 data-i18n="colDoneTitle">完了 · Hoàn thành</h2>
+                    </div>
+                    <span class="task-count" id="count-done">0</span>
+                </div>
+                <div class="task-list" id="done-list"
+                     ondrop="handleDrop(event)"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)">
+                    <div class="empty-state">
+                        <span class="empty-kanji">達</span>
+                        <p data-i18n="emptyDone">Đã hoàn thành</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SCRUM PANEL (RIGHT) ===== -->
+        <aside class="scrum-panel">
+            <!-- Tab Navigation -->
+            <div class="scrum-tabs">
+                <button class="scrum-tab active" data-tab="sprint" onclick="switchScrumTab('sprint')">🏃 Sprint</button>
+                <button class="scrum-tab" data-tab="backlog" onclick="switchScrumTab('backlog')">📦 Backlog</button>
+                <button class="scrum-tab" data-tab="retro" onclick="switchScrumTab('retro')">🔄 Retro</button>
+            </div>
+
+            <!-- TAB: Sprint Overview -->
+            <div class="scrum-content" id="tab-sprint">
+                <!-- Sprint Info -->
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3 data-i18n="sprintCurrentTitle">スプリント · Sprint hiện tại</h3>
+                        <button class="btn-icon" onclick="openSprintModal()" title="Cấu hình Sprint">⚙️</button>
+                    </div>
+                    <div class="sprint-info-card">
+                        <div class="sprint-progress">
+                            <div class="progress-ring" id="sprintProgressRing">
+                                <svg viewBox="0 0 100 100">
+                                    <circle class="progress-bg" cx="50" cy="50" r="42"/>
+                                    <circle class="progress-fill" cx="50" cy="50" r="42" id="progressCircle"/>
+                                </svg>
+                                <div class="progress-text">
+                                    <span class="progress-percent" id="progressPercent">0%</span>
+                                    <span class="progress-label" data-i18n="labelCompleted">hoàn thành</span>
+                                </div>
+                            </div>
+                            <div class="sprint-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label" data-i18n="labelGoal">Mục tiêu</span>
+                                    <p class="meta-value" id="sprintGoalDisplay">Chưa đặt mục tiêu</p>
+                                </div>
+                                <div class="meta-row">
+                                    <div class="meta-item">
+                                        <span class="meta-label">Story Points</span>
+                                        <span class="meta-value-big" id="sprintPoints">0 / 0 SP</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">Velocity</span>
+                                        <span class="meta-value-big" id="sprintVelocity">— SP</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Burndown Chart -->
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3 data-i18n="burndownTitle">バーンダウン · Burndown</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="burndownChart" width="380" height="180"></canvas>
+                    </div>
+                </div>
+
+                <!-- Sprint Goals / Daily Standup -->
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3 data-i18n="standupTitle">朝会 · Daily Standup</h3>
+                        <button class="btn-icon" onclick="addStandupNote()" title="Ghi chú standup">＋</button>
+                    </div>
+                    <div class="standup-list" id="standupList">
+                        <div class="empty-standup">
+                            <span>📝</span>
+                            <p data-i18n="emptyStandup">Nhấn ＋ để ghi chú standup hàng ngày</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Product Backlog -->
+            <div class="scrum-content hidden" id="tab-backlog">
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3 data-i18n="backlogTitle">バックログ · Product Backlog</h3>
+                        <button class="btn-icon" onclick="addBacklogItem()" title="Thêm backlog item">＋</button>
+                    </div>
+                    <p class="section-desc" data-i18n="backlogDesc">Danh sách User Stories chưa vào Sprint. Bấm "Đưa vào Sprint" để bắt đầu thực hiện.</p>
+                    <div class="backlog-list" id="backlogList">
+                        <div class="empty-standup">
+                            <span>📦</span>
+                            <p data-i18n="emptyBacklog">Backlog trống. Nhấn ＋ để thêm.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sprint History -->
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3 data-i18n="historyTitle">歴史 · Sprint History</h3>
+                    </div>
+                    <div class="sprint-history" id="sprintHistory">
+                        <div class="empty-standup">
+                            <span>📊</span>
+                            <p data-i18n="emptyHistory">Chưa có Sprint nào hoàn thành</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Retrospective -->
+            <div class="scrum-content hidden" id="tab-retro">
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3 data-i18n="retroTitle">振り返り · Retrospective</h3>
+                    </div>
+                    <p class="section-desc" data-i18n="retroDesc">Nhìn lại Sprint — điều gì tốt, điều gì cần cải thiện?</p>
+
+                    <!-- What went well -->
+                    <div class="retro-column retro-good">
+                        <div class="retro-col-header">
+                            <span data-i18n="retroGoodHeader">🌸 Tốt — うまくいったこと</span>
+                            <button class="btn-icon" onclick="addRetroItem('good')">＋</button>
+                        </div>
+                        <div class="retro-items" id="retroGood"></div>
+                    </div>
+
+                    <!-- What to improve -->
+                    <div class="retro-column retro-improve">
+                        <div class="retro-col-header">
+                            <span data-i18n="retroImproveHeader">🍂 Cải thiện — 改善すべきこと</span>
+                            <button class="btn-icon" onclick="addRetroItem('improve')">＋</button>
+                        </div>
+                        <div class="retro-items" id="retroImprove"></div>
+                    </div>
+
+                    <!-- Action items -->
+                    <div class="retro-column retro-action">
+                        <div class="retro-col-header">
+                            <span data-i18n="retroActionHeader">🎋 Hành động — アクション</span>
+                            <button class="btn-icon" onclick="addRetroItem('action')">＋</button>
+                        </div>
+                        <div class="retro-items" id="retroAction"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ===== ADD/EDIT TASK MODAL ===== -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle" data-i18n="modalAddTaskTitle">✏️ Thêm công việc mới</h3>
+                <button class="btn-close" onclick="closeModal()">✕</button>
+            </div>
+            <form id="taskForm">
                 <div class="form-group">
-                    <label for="taskStatus">Trạng thái</label>
-                    <select id="taskStatus">
-                        <option value="todo">📝 To Do</option>
-                        <option value="doing">🔧 Doing</option>
-                        <option value="done">✅ Done</option>
-                    </select>
+                    <label for="taskTitle"><span data-i18n="labelTaskTitle">Tiêu đề</span> <span class="required">*</span></label>
+                    <input type="text" id="taskTitle" placeholder="Nhập tiêu đề..." required maxlength="100">
                 </div>
                 <div class="form-group">
-                    <label for="taskDueDate">Hạn chót</label>
-                    <input type="date" id="taskDueDate">
+                    <label for="taskDesc" data-i18n="labelTaskDesc">Mô tả</label>
+                    <textarea id="taskDesc" placeholder="Chi tiết công việc..." rows="2" maxlength="500"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskPriority" data-i18n="labelPriority">Độ ưu tiên</label>
+                        <select id="taskPriority">
+                            <option value="low" data-i18n="priorityLow">Thấp</option>
+                            <option value="medium" selected data-i18n="priorityMedium">Trung bình</option>
+                            <option value="high" data-i18n="priorityHigh">Cao</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPoints">Story Points</label>
+                        <select id="taskPoints">
+                            <option value="1">1 SP</option>
+                            <option value="2">2 SP</option>
+                            <option value="3" selected>3 SP</option>
+                            <option value="5">5 SP</option>
+                            <option value="8">8 SP</option>
+                            <option value="13">13 SP</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskStatus" data-i18n="labelStatus">Trạng thái</label>
+                        <select id="taskStatus">
+                            <option value="todo" data-i18n="statusTodoOpt">待機 · To Do</option>
+                            <option value="doing" data-i18n="statusDoingOpt">進行 · Doing</option>
+                            <option value="done" data-i18n="statusDoneOpt">完了 · Done</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDueDate" data-i18n="labelDueDate">Hạn chót</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="labelStickyColor">Màu Sticky Note</label>
+                    <div class="color-picker" id="colorPicker">
+                        <div class="color-option selected" data-color="#F5F0E1" title="和紙 Washi"></div>
+                        <div class="color-option" data-color="#FADCE6" title="桜 Sakura"></div>
+                        <div class="color-option" data-color="#D6E5C3" title="抹茶 Matcha"></div>
+                        <div class="color-option" data-color="#C9D9E8" title="藍 Ai"></div>
+                        <div class="color-option" data-color="#DDD2E4" title="藤 Fuji"></div>
+                        <div class="color-option" data-color="#F0DCC0" title="琥珀 Kohaku"></div>
+                    </div>
                 </div>
                 <input type="hidden" id="taskId" value="">
                 <div class="modal-actions">
-                    <button type="button" class="btn-cancel" id="btnCancel">Hủy</button>
-                    <button type="submit" class="btn-save">💾 Lưu</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()" data-i18n="btnCancel">Hủy</button>
+                    <button type="submit" class="btn-save" data-i18n="btnSave">Lưu</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- ===== DELETE MODAL ===== -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal modal-small">
             <div class="modal-header">
-                <h3>🗑️ Xác nhận xóa</h3>
-                <button class="btn-close" id="btnCloseDelete">&times;</button>
+                <h3 data-i18n="deleteTitle">Xác nhận xóa</h3>
+                <button class="btn-close" onclick="closeDeleteModal()">✕</button>
             </div>
-            <p class="delete-msg">Bạn có chắc chắn muốn xóa công việc này không?</p>
+            <p class="delete-msg" data-i18n="deleteMsg">Bạn có chắc chắn muốn xóa công việc này?</p>
             <div class="modal-actions">
-                <button class="btn-cancel" id="btnCancelDelete">Hủy</button>
-                <button class="btn-delete" id="btnConfirmDelete">🗑️ Xóa</button>
+                <button class="btn-cancel" onclick="closeDeleteModal()" data-i18n="btnCancel">Hủy</button>
+                <button class="btn-delete" id="btnConfirmDelete" data-i18n="btnDelete">Xóa</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- ===== SPRINT CONFIG MODAL ===== -->
+    <div class="modal-overlay" id="sprintModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 data-i18n="sprintConfigTitle">⚙️ Cấu hình Sprint</h3>
+                <button class="btn-close" onclick="closeSprintModal()">✕</button>
+            </div>
+            <form id="sprintForm">
+                <div class="form-group">
+                    <label for="sprintNameInput" data-i18n="labelSprintName">Tên Sprint</label>
+                    <input type="text" id="sprintNameInput" placeholder="Sprint 1" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="sprintGoalInput" data-i18n="labelSprintGoal">Mục tiêu Sprint</label>
+                    <textarea id="sprintGoalInput" placeholder="Mục tiêu cần đạt được..." rows="2" maxlength="200"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sprintStart" data-i18n="labelStartDate">Ngày bắt đầu</label>
+                        <input type="date" id="sprintStart">
+                    </div>
+                    <div class="form-group">
+                        <label for="sprintEnd" data-i18n="labelEndDate">Ngày kết thúc</label>
+                        <input type="date" id="sprintEnd">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeSprintModal()" data-i18n="btnCancel">Hủy</button>
+                    <button type="button" class="btn-delete" onclick="endCurrentSprint()" style="margin-right:auto" data-i18n="btnEndSprint">Kết thúc Sprint</button>
+                    <button type="submit" class="btn-save" data-i18n="btnSaveSprint">Lưu Sprint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== BACKLOG ITEM MODAL ===== -->
+    <div class="modal-overlay" id="backlogModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="backlogModalTitle" data-i18n="addBacklogTitle">📦 Thêm Backlog Item</h3>
+                <button class="btn-close" onclick="closeBacklogModal()">✕</button>
+            </div>
+            <form id="backlogForm">
+                <div class="form-group">
+                    <label for="backlogTitle"><span data-i18n="labelUserStory">User Story</span> <span class="required">*</span></label>
+                    <input type="text" id="backlogTitle" placeholder='Ví dụ: "Là người dùng, tôi muốn..."' required maxlength="150">
+                </div>
+                <div class="form-group">
+                    <label for="backlogDesc" data-i18n="labelCriteria">Acceptance Criteria</label>
+                    <textarea id="backlogDesc" placeholder="Tiêu chí chấp nhận..." rows="2" maxlength="300"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="backlogPriority" data-i18n="labelPriority">Độ ưu tiên</label>
+                        <select id="backlogPriority">
+                            <option value="low" data-i18n="priorityLow">Thấp</option>
+                            <option value="medium" selected data-i18n="priorityMedium">Trung bình</option>
+                            <option value="high" data-i18n="priorityHigh">Cao</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="backlogPoints">Story Points</label>
+                        <select id="backlogPoints">
+                            <option value="1">1 SP</option>
+                            <option value="2">2 SP</option>
+                            <option value="3" selected>3 SP</option>
+                            <option value="5">5 SP</option>
+                            <option value="8">8 SP</option>
+                            <option value="13">13 SP</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" id="backlogId" value="">
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeBacklogModal()" data-i18n="btnCancel">Hủy</button>
+                    <button type="submit" class="btn-save" data-i18n="btnSave">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="app.js"></script>
 </body>
 </html>
-
