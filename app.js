@@ -88,7 +88,18 @@ const TRANSLATIONS = {
         retroPromptImprove: 'Điều gì có thể cải thiện tốt hơn?',
         retroPromptAction: 'Hành động cụ thể cho Sprint tiếp theo?',
         confirmEndSprint: 'Bạn có chắc chắn muốn kết thúc {name}? Các công việc hoàn thành sẽ được lưu vào lịch sử.',
-        today: 'Hôm nay'
+        today: 'Hôm nay',
+        btnGuide: 'Hướng dẫn',
+        scrumOn: '⚡ Scrum: Bật',
+        scrumOff: '⚡ Scrum: Tắt',
+        tourBtnSkip: 'Bỏ qua',
+        tourBtnPrev: '⟨ Trước',
+        tourBtnNext: 'Tiếp tục ⟩',
+        tourBtnFinish: '🎉 Bắt đầu sử dụng!',
+        toastScrumEnabled: 'Đã bật chế độ Scrum & Agile',
+        toastScrumDisabled: 'Đã chuyển sang chế độ Kanban đơn giản',
+        toastTipAutoOn: 'Đã bật tự động chuyển gợi ý',
+        toastTipAutoOff: 'Đã tạm dừng tự động chuyển gợi ý'
     },
     en: {
         appSubtitle: 'アジャイル · Agile & Scrum',
@@ -170,7 +181,18 @@ const TRANSLATIONS = {
         retroPromptImprove: 'What could be improved?',
         retroPromptAction: 'Concrete action items for the next Sprint?',
         confirmEndSprint: 'Are you sure you want to end {name}? Completed tasks will be archived.',
-        today: 'Today'
+        today: 'Today',
+        btnGuide: 'Guide',
+        scrumOn: '⚡ Scrum: On',
+        scrumOff: '⚡ Scrum: Off',
+        tourBtnSkip: 'Skip',
+        tourBtnPrev: '⟨ Back',
+        tourBtnNext: 'Next ⟩',
+        tourBtnFinish: '🎉 Start Using!',
+        toastScrumEnabled: 'Scrum & Agile mode enabled',
+        toastScrumDisabled: 'Switched to Simple Kanban mode',
+        toastTipAutoOn: 'Tip auto-cycling enabled',
+        toastTipAutoOff: 'Tip auto-cycling paused'
     }
 };
 
@@ -198,9 +220,207 @@ function setLanguage(lang) {
         el.textContent = t(key);
     });
 
+    updateScrumModeUI();
+    if (isTourActive) renderTourStep();
+
     // Re-render dynamic elements
     renderAll();
     showToast(lang === 'vi' ? 'Đã đổi sang Tiếng Việt' : 'Switched to English', 'info');
+}
+
+// ===== SCRUM MODE TOGGLE =====
+let isScrumEnabled = localStorage.getItem('kanban_zen_scrum_enabled') !== 'false';
+
+function toggleScrumMode(forceState = null) {
+    if (forceState !== null) {
+        isScrumEnabled = forceState;
+    } else {
+        isScrumEnabled = !isScrumEnabled;
+    }
+    localStorage.setItem('kanban_zen_scrum_enabled', isScrumEnabled ? 'true' : 'false');
+    updateScrumModeUI();
+
+    showToast(isScrumEnabled ? t('toastScrumEnabled') : t('toastScrumDisabled'), 'info');
+}
+
+function updateScrumModeUI() {
+    document.body.classList.toggle('scrum-disabled', !isScrumEnabled);
+
+    const btn = document.getElementById('btnScrumToggle');
+    const txt = document.getElementById('scrumToggleText');
+
+    if (btn) btn.classList.toggle('active', isScrumEnabled);
+    if (txt) txt.textContent = isScrumEnabled ? t('scrumOn') : t('scrumOff');
+
+    if (isScrumEnabled) {
+        setTimeout(renderBurndown, 80);
+    }
+}
+
+// ===== ONBOARDING INTERACTIVE TOUR =====
+const TOUR_STEPS = [
+    {
+        target: '.kanban-board',
+        vi: {
+            title: '📋 3 Cột trạng thái Kanban',
+            desc: 'Đây là không gian quản lý chính: <b>Cần làm (To Do)</b> ➡️ <b>Đang làm (Doing)</b> ➡️ <b>Hoàn thành (Done)</b>. Bạn chỉ cần nắm và kéo thả các thẻ Sticky Note giữa các cột theo tiến độ thực tế.'
+        },
+        en: {
+            title: '📋 3 Kanban Status Columns',
+            desc: 'Your core workspace: <b>To Do</b> ➡️ <b>Doing</b> ➡️ <b>Done</b>. Drag and drop sticky notes between columns as your tasks progress.'
+        }
+    },
+    {
+        target: '#btnOpenModal',
+        vi: {
+            title: '＋ Tạo công việc mới',
+            desc: 'Nhấn nút <b>＋ Thêm việc</b> (hoặc phím tắt <code>Ctrl + N</code>) để tạo giấy dán mới. Bạn có thể chọn 6 màu giấy Washi, đặt hạn chót và mức độ ưu tiên.'
+        },
+        en: {
+            title: '＋ Add New Task',
+            desc: 'Click <b>＋ Add Task</b> (or press <code>Ctrl + N</code>) to create a Sticky Note. Choose from 6 Washi colors, set due dates, and priorities.'
+        }
+    },
+    {
+        target: '.column[data-status="todo"]',
+        vi: {
+            title: '📝 Thao tác trên Sticky Note',
+            desc: 'Di chuột vào bất kỳ Sticky Note nào: Nhấn ✏️ để chỉnh sửa nội dung hoặc ✕ để xóa nhanh. Khi kéo vào cột <b>Hoàn thành</b>, công việc sẽ tự động được gạch ngang.'
+        },
+        en: {
+            title: '📝 Sticky Note Actions',
+            desc: 'Hover over any note: click ✏️ to edit or ✕ to delete. Moving a note to <b>Done</b> will automatically strike through its title.'
+        }
+    },
+    {
+        target: '#btnScrumToggle',
+        vi: {
+            title: '⚡ Bật / Tắt chế độ Scrum',
+            desc: '<b>Tính năng mới</b>: Nếu bạn chỉ cần bảng Kanban đơn giản, hãy tắt nút này để ẩn bảng bên phải. Bật lên khi bạn muốn quản lý theo <b>Sprint, Backlog và Burndown Chart</b>!'
+        },
+        en: {
+            title: '⚡ Toggle Scrum Mode',
+            desc: '<b>New feature</b>: If you just want a simple Kanban board, turn this off to hide the right panel. Turn it on whenever you need <b>Sprint, Backlog & Burndown tracking</b>!'
+        }
+    },
+    {
+        target: '.scrum-panel',
+        vi: {
+            title: '🏃 Bảng Scrum & Bật/Tắt gợi ý',
+            desc: 'Tại đây bạn có thể theo dõi tiến độ Sprint, xem biểu đồ Burndown và chuyển User Story từ Backlog. Mục <b>Bạn có biết?</b> bên dưới có nút ⏸️/▶️ để bạn chủ động dừng hoặc bật tự động chuyển mẹo.'
+        },
+        en: {
+            title: '🏃 Scrum Panel & Tip Controls',
+            desc: 'Track Sprint progress, view Burndown charts, and pull User Stories from Backlog. The <b>Did you know?</b> widget below includes a ⏸️/▶️ button to pause or play tip rotation.'
+        }
+    },
+    {
+        target: '#langSwitch',
+        vi: {
+            title: '🌐 Đổi ngôn ngữ & Xem lại hướng dẫn',
+            desc: 'Chuyển đổi linh hoạt giữa Tiếng Việt và Tiếng Anh bất kỳ lúc nào. Bạn cũng có thể nhấn nút <b>❓ Hướng dẫn</b> trên thanh công cụ để xem lại hướng dẫn này.'
+        },
+        en: {
+            title: '🌐 Languages & Replaying Guide',
+            desc: 'Switch between Vietnamese and English anytime. You can always click the <b>❓ Guide</b> button in the header to replay this tour!'
+        }
+    }
+];
+
+let isTourActive = false;
+let currentTourStep = 0;
+
+function startOnboardingTour() {
+    isTourActive = true;
+    currentTourStep = 0;
+    document.body.classList.add('tour-active');
+    renderTourStep();
+}
+
+function renderTourStep() {
+    const step = TOUR_STEPS[currentTourStep];
+    if (!step) return;
+
+    let target = document.querySelector(step.target);
+    if (!target) target = document.querySelector('.header') || document.body;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    setTimeout(() => {
+        const rect = target.getBoundingClientRect();
+        const spotlight = document.getElementById('tourSpotlight');
+        const popover = document.getElementById('tourPopover');
+
+        if (!spotlight || !popover) return;
+
+        const pad = 8;
+        spotlight.style.top = Math.max(0, rect.top - pad) + 'px';
+        spotlight.style.left = Math.max(0, rect.left - pad) + 'px';
+        spotlight.style.width = (rect.width + pad * 2) + 'px';
+        spotlight.style.height = (rect.height + pad * 2) + 'px';
+
+        const stepData = step[currentLang] || step.vi;
+        const badgeEl = document.getElementById('tourStepBadge');
+        if (badgeEl) badgeEl.textContent = `${currentLang === 'vi' ? 'Bước' : 'Step'} ${currentTourStep + 1} / ${TOUR_STEPS.length}`;
+        
+        const titleEl = document.getElementById('tourTitle');
+        if (titleEl) titleEl.innerHTML = stepData.title;
+
+        const descEl = document.getElementById('tourDesc');
+        if (descEl) descEl.innerHTML = stepData.desc;
+
+        const prevBtn = document.getElementById('tourBtnPrev');
+        const nextBtn = document.getElementById('tourBtnNext');
+
+        if (prevBtn) {
+            prevBtn.style.display = currentTourStep === 0 ? 'none' : 'inline-flex';
+            prevBtn.textContent = t('tourBtnPrev');
+        }
+
+        if (nextBtn) {
+            nextBtn.textContent = currentTourStep === TOUR_STEPS.length - 1 ? t('tourBtnFinish') : t('tourBtnNext');
+        }
+
+        const popW = 360;
+        const popH = popover.offsetHeight || 190;
+        const winW = window.innerWidth;
+        const winH = window.innerHeight;
+
+        let popLeft = rect.left + rect.width / 2 - popW / 2;
+        if (popLeft < 16) popLeft = 16;
+        if (popLeft + popW > winW - 16) popLeft = winW - popW - 16;
+
+        let popTop = rect.bottom + pad + 12;
+        if (popTop + popH > winH - 16) {
+            popTop = Math.max(16, rect.top - pad - popH - 12);
+        }
+
+        popover.style.top = popTop + 'px';
+        popover.style.left = popLeft + 'px';
+    }, 60);
+}
+
+function nextTourStep() {
+    if (currentTourStep >= TOUR_STEPS.length - 1) {
+        closeTour();
+        showToast(currentLang === 'vi' ? 'Tuyệt vời! Chúc bạn làm việc hiệu quả!' : 'Awesome! Enjoy your productivity!', 'success');
+    } else {
+        currentTourStep++;
+        renderTourStep();
+    }
+}
+
+function prevTourStep() {
+    if (currentTourStep > 0) {
+        currentTourStep--;
+        renderTourStep();
+    }
+}
+
+function closeTour() {
+    isTourActive = false;
+    document.body.classList.remove('tour-active');
+    localStorage.setItem('kanban_zen_tour_seen', 'true');
 }
 
 // ===== GLOBAL STATE =====
@@ -257,10 +477,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         el.textContent = t(el.dataset.i18n);
     });
+
+    updateScrumModeUI();
+
+    const tipBtn = document.getElementById('btnToggleTipAuto');
+    if (tipBtn) tipBtn.textContent = isTipAutoPlayEnabled ? '⏸️' : '▶️';
+
     renderAll();
     setupEventListeners();
     setupBurndownChart();
     startTipAutoPlay();
+
+    // Automatically prompt tour for first-time visitors
+    if (!localStorage.getItem('kanban_zen_tour_seen')) {
+        setTimeout(() => {
+            startOnboardingTour();
+        }, 800);
+    }
 });
 
 // Helper for dates
@@ -1129,8 +1362,27 @@ function goToTip(idx) {
     renderTip();
 }
 
+let isTipAutoPlayEnabled = localStorage.getItem('kanban_zen_tip_auto') !== 'false';
+
+function toggleTipAutoPlay() {
+    isTipAutoPlayEnabled = !isTipAutoPlayEnabled;
+    localStorage.setItem('kanban_zen_tip_auto', isTipAutoPlayEnabled ? 'true' : 'false');
+
+    const btn = document.getElementById('btnToggleTipAuto');
+    if (btn) btn.textContent = isTipAutoPlayEnabled ? '⏸️' : '▶️';
+
+    if (isTipAutoPlayEnabled) {
+        startTipAutoPlay();
+        showToast(t('toastTipAutoOn'), 'info');
+    } else {
+        if (tipTimer) clearInterval(tipTimer);
+        showToast(t('toastTipAutoOff'), 'info');
+    }
+}
+
 function startTipAutoPlay() {
     if (tipTimer) clearInterval(tipTimer);
+    if (!isTipAutoPlayEnabled) return;
     tipTimer = setInterval(() => {
         if (!isTipPaused) {
             nextTip();

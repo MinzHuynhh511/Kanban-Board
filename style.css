@@ -153,7 +153,71 @@ body {
 .header-right {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+}
+
+/* Scrum Mode Toggle */
+.btn-scrum-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 13px;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-tertiary);
+}
+
+.btn-scrum-toggle .scrum-toggle-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6f717d;
+    transition: var(--transition);
+}
+
+.btn-scrum-toggle.active {
+    background: rgba(196, 139, 72, 0.14);
+    border-color: rgba(196, 139, 72, 0.45);
+    color: var(--kohaku-amber);
+    box-shadow: 0 1px 8px rgba(196, 139, 72, 0.18);
+}
+
+.btn-scrum-toggle.active .scrum-toggle-dot {
+    background: var(--kohaku-amber);
+    box-shadow: 0 0 6px var(--kohaku-amber);
+}
+
+.btn-scrum-toggle:hover {
+    transform: translateY(-1px);
+}
+
+/* Tour Guide Button */
+.btn-guide {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 13px;
+    background: rgba(91, 130, 166, 0.12);
+    border: 1px solid rgba(91, 130, 166, 0.35);
+    color: #9ebdd8;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-guide:hover {
+    background: rgba(91, 130, 166, 0.28);
+    color: #fff;
+    transform: translateY(-1px);
 }
 
 /* Language Switcher */
@@ -253,6 +317,28 @@ body {
     padding: 24px 28px;
     min-height: calc(100vh - 72px);
     align-items: start;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Disabled Scrum Mode (Simple Kanban Mode) */
+body.scrum-disabled .scrum-panel {
+    display: none !important;
+}
+
+body.scrum-disabled #sprintBadge {
+    display: none !important;
+}
+
+body.scrum-disabled .main-layout {
+    grid-template-columns: 1fr !important;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+body.scrum-disabled .kanban-board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
 }
 
 /* ===== KANBAN SECTION ===== */
@@ -1410,4 +1496,176 @@ select option {
         grid-template-columns: 1fr;
         gap: 0;
     }
+}
+
+/* ===== ONBOARDING INTERACTIVE TOUR ===== */
+.tour-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 13, 17, 0.65);
+    backdrop-filter: blur(2px);
+    z-index: 3000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+body.tour-active .tour-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.tour-spotlight {
+    position: fixed;
+    z-index: 3001;
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 0 9999px rgba(12, 13, 17, 0.75), 0 0 20px rgba(196, 139, 72, 0.45);
+    border: 2px solid var(--kohaku-amber);
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+body.tour-active .tour-spotlight {
+    opacity: 1;
+}
+
+.tour-popover {
+    position: fixed;
+    z-index: 3002;
+    background: var(--bg-surface);
+    border: 1px solid rgba(196, 139, 72, 0.45);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    width: 360px;
+    max-width: 90vw;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65), 0 0 12px rgba(196, 139, 72, 0.15);
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+body.tour-active .tour-popover {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.tour-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tour-step-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(196, 139, 72, 0.18);
+    color: var(--kohaku-amber);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tour-btn-close {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.tour-btn-close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.tour-title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tour-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 16px;
+}
+
+.tour-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.tour-btn-skip {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    font-family: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 4px 8px;
+}
+
+.tour-btn-skip:hover {
+    color: var(--text-secondary);
+    text-decoration: underline;
+}
+
+.tour-actions-right {
+    display: flex;
+    gap: 8px;
+}
+
+.tour-btn-prev {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tour-btn-prev:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.tour-btn-next {
+    background: var(--matcha-green);
+    border: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 15px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(104, 159, 120, 0.35);
+}
+
+.tour-btn-next:hover {
+    background: #76af86;
+    transform: translateY(-1px);
 }

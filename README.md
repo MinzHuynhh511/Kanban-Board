@@ -90,6 +90,9 @@ Mô hình họp đúc kết kinh nghiệm sau mỗi Sprint theo chuẩn KPT (Kee
 | **Xóa công việc** | Di chuột vào Sticky Note và bấm biểu tượng ✕ |
 | **Di chuyển trạng thái** | Kéo và thả Sticky Note sang các cột *To Do*, *Doing* hoặc *Done* |
 | **Chuyển ngôn ngữ** | Nhấp vào nút **VI** hoặc **EN** trên thanh Header |
+| **Bật / Tắt chế độ Scrum** | Bấm nút **⚡ Scrum: Bật / Tắt** trên thanh Header để chuyển đổi giữa chế độ Kanban đơn giản và Scrum nâng cao |
+| **Bật / Tắt tự động nhảy gợi ý** | Bấm nút **⏸️ / ▶️** trong mục *💡 Bạn có biết?* để tạm dừng hoặc bật tự động chuyển mẹo |
+| **Xem hướng dẫn từng bước trên màn hình** | Bấm nút **❓ Hướng dẫn** trên thanh Header để bật tour dẫn dắt thao tác trực quan |
 | **Ghi chú Standup** | Chuyển sang tab **Sprint**, bấm nút **＋** ở mục Daily Standup |
 | **Thêm User Story vào Backlog** | Chuyển sang tab **Backlog**, bấm nút **＋** để tạo câu chuyện người dùng mới |
 | **Đưa Story vào Sprint** | Trong tab Backlog, bấm **➡️ Đưa vào Sprint** tại thẻ story tương ứng |

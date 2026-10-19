@@ -31,6 +31,17 @@
             </div>
         </div>
         <div class="header-right">
+            <!-- Scrum Mode Toggle -->
+            <button class="btn-scrum-toggle active" id="btnScrumToggle" onclick="toggleScrumMode()" title="Bật / Tắt phương pháp Scrum">
+                <span class="scrum-toggle-dot"></span>
+                <span id="scrumToggleText">⚡ Scrum: Bật</span>
+            </button>
+
+            <!-- Interactive Tour Guide Button -->
+            <button class="btn-guide" id="btnStartTour" onclick="startOnboardingTour()" title="Xem hướng dẫn từng bước">
+                <span>❓</span> <span data-i18n="btnGuide">Hướng dẫn</span>
+            </button>
+
             <!-- Language Switcher -->
             <div class="lang-switch" id="langSwitch" title="Chuyển ngôn ngữ / Change language">
                 <button class="lang-btn active" data-lang="vi" onclick="setLanguage('vi')">VI</button>
@@ -201,6 +212,7 @@
                             <button type="button" class="btn-icon tips-nav-btn" onclick="prevTip()" title="Gợi ý trước">⟨</button>
                             <span class="tips-counter" id="tipCounter">1/8</span>
                             <button type="button" class="btn-icon tips-nav-btn" onclick="nextTip()" title="Gợi ý tiếp theo">⟩</button>
+                            <button type="button" class="btn-icon tips-nav-btn" id="btnToggleTipAuto" onclick="toggleTipAutoPlay()" title="Tạm dừng / Tiếp tục tự động chuyển">⏸️</button>
                         </div>
                     </div>
                     <div class="tip-card" id="tipCard" onmouseenter="pauseTipAutoPlay()" onmouseleave="resumeTipAutoPlay()">
@@ -451,6 +463,25 @@
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== ONBOARDING INTERACTIVE TOUR ===== -->
+    <div class="tour-backdrop" id="tourBackdrop" onclick="closeTour()"></div>
+    <div class="tour-spotlight" id="tourSpotlight"></div>
+    <div class="tour-popover" id="tourPopover">
+        <div class="tour-header">
+            <span class="tour-step-badge" id="tourStepBadge">Bước 1 / 6</span>
+            <button class="tour-btn-close" onclick="closeTour()" title="Đóng hướng dẫn">✕</button>
+        </div>
+        <h3 class="tour-title" id="tourTitle">Tiêu đề bước</h3>
+        <p class="tour-desc" id="tourDesc">Mô tả chi tiết hướng dẫn thao tác...</p>
+        <div class="tour-footer">
+            <button class="tour-btn-skip" onclick="closeTour()" data-i18n="tourBtnSkip">Bỏ qua</button>
+            <div class="tour-actions-right">
+                <button class="tour-btn-prev" id="tourBtnPrev" onclick="prevTourStep()" data-i18n="tourBtnPrev">⟨ Trước</button>
+                <button class="tour-btn-next" id="tourBtnNext" onclick="nextTourStep()" data-i18n="tourBtnNext">Tiếp tục ⟩</button>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>
